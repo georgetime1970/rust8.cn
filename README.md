@@ -2,8 +2,6 @@
 
 # 🦀 Rust 八股文
 
-**🐯 更适合中国人的 Rust 教程**
-
 <img style="height: 350px;" src="./docs/public/assets/logo/logo.jpg" />
 
 <div style=" padding: 0 64px;
@@ -13,10 +11,10 @@
   flex-wrap: wrap;
   gap: 10px;
   margin-bottom: 20px;">
-<img style="height:250px; margin-right: 10px;" src="./docs/public/assets/img/1.jpg" />
-<img style="height:250px; margin-right: 10px;" src="./docs/public/assets/img/2.jpg" />
-<img style="height:250px; margin-right: 10px;" src="./docs/public/assets/img/3.jpg" />
-<img style="height:250px; margin-right: 10px;" src="./docs/public/assets/img/4.jpg" />
+<img style="height:200px; margin-right: 10px;" src="./docs/public/assets/img/1.jpg" />
+<img style="height:200px; margin-right: 10px;" src="./docs/public/assets/img/2.jpg" />
+<img style="height:200px; margin-right: 10px;" src="./docs/public/assets/img/3.jpg" />
+<img style="height:200px; margin-right: 10px;" src="./docs/public/assets/img/4.jpg" />
 </div>
 
 ![Rust](https://img.shields.io/badge/Rust-orange?logo=rust&logoColor=white)
