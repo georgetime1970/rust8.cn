@@ -75,7 +75,7 @@ export default defineConfig({
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       { text: "首页", link: "/" },
-      { text: "八股文", link: "/Rust/0.前言" },
+      { text: "Rust 八股文", link: "/Rust/0.前言" },
     ],
 
     // 侧边栏是文档的主要导航块

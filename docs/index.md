@@ -9,7 +9,7 @@ hero:
     alt: Rust 八股文
   actions:
     - theme: brand
-      text: 开始八股文
+      text: 学习 Rust 八股文
       link: /Rust/0.前言
     - theme: alt
       text: Rust 学习资料

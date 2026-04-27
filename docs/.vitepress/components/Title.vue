@@ -32,9 +32,11 @@
 @media (max-width: 768px) {
   .container {
     .title {
+      display: none;
       font-size: 2rem;
     }
     .text {
+      margin-top: -1rem;
       font-size: 1.5rem;
     }
   }

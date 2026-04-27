@@ -643,3 +643,12 @@
   width: 380px !important;
   height: 380px !important;
 }
+
+@media (max-width: 768px) {
+  .image-src {
+    max-width: none !important; /* 必须加上这一行 */
+    max-height: none !important; /* 必须加上这一行 */
+    width: 280px !important;
+    height: 280px !important;
+  }
+}
