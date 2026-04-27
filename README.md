@@ -104,9 +104,3 @@ pnpm docs:build
 ```bash
 pnpm docs:preview
 ```
-
-## 建议与贡献
-
-个人难免有理解偏差和表达不清的地方，如果你发现了任何问题或者有更好的建议，欢迎提交 [Issue](../../issues) 或 [Pull Request](../../pulls) 来改进这个教程。
-
-如果这个教程对你有帮助，欢迎给它一个 Star ⭐，或者分享给更多的 Rust 学习者。
