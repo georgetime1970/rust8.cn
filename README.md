@@ -7,15 +7,16 @@
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 40px;">
+  gap: 10px;>
 <img style="height:200px; margin-right: 10px;" src="./docs/public/assets/img/1.webp" />
 <img style="height:200px; margin-right: 10px;" src="./docs/public/assets/img/2.webp" />
 <img style="height:200px; margin-right: 10px;" src="./docs/public/assets/img/3.webp" />
 <img style="height:200px; margin-right: 10px;" src="./docs/public/assets/img/4.webp" />
 </div>
 
-![Rust](https://img.shields.io/badge/Rust-orange?logo=rust&logoColor=white)
+<br/>
+
+![Rust](https://img.shields.io/badge/Rust-orange?logo=rust&logoColor=white) ![GitHub](https://img.shields.io/badge/GitHub-000?logo=github) ![License](https://img.shields.io/badge/License-MIT-green) ![Chinese](https://img.shields.io/badge/Language-Chinese-red)
 
 </div>
 

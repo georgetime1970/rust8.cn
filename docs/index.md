@@ -13,5 +13,5 @@ hero:
       link: /Rust/0.前言
     - theme: alt
       text: Rust 学习资料
-      link: /Rust/0.前言
+      link: /Rust/more.md
 ---

@@ -32,7 +32,7 @@ export default defineConfig({
     logo: "/assets/logo/will-o.ico",
 
     // 社交链接
-    socialLinks: [{ icon: "github", link: "https://github.com/georgetime1970" }],
+    socialLinks: [{ icon: "github", link: "https://github.com/georgetime1970/rust8.cn" }],
 
     // 启用本地搜索
     search: {
@@ -76,6 +76,7 @@ export default defineConfig({
     nav: [
       { text: "首页", link: "/" },
       { text: "Rust 八股文", link: "/Rust/0.前言" },
+      { text: "学习资料", link: "/Rust/more.md" },
     ],
 
     // 侧边栏是文档的主要导航块
