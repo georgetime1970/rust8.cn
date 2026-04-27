@@ -9,7 +9,7 @@ export default defineConfig({
   head: [
     // 站点图标
     // ['link', { rel: 'icon', href: '/Tutorial/logo/will-o.ico' }], // 如果使用github的域名,构建到GitHub 页面,需要加仓库的名字
-    ["link", { rel: "icon", href: "/logo/will-o.ico" }], // 构建到GitHub 页面,需要加仓库的名字
+    ["link", { rel: "icon", href: "/assets/logo/will-o.ico" }], // 构建到GitHub 页面,需要加仓库的名字
   ],
 
   description: "Rust 八股文 -- 更适合中国人的 Rust 教程",
