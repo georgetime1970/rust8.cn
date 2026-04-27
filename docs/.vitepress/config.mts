@@ -1,5 +1,5 @@
 import { defineConfig } from "vitepress";
-import rustDirectory from "../rust";
+import rustDirectory from "../Rust";
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
@@ -69,7 +69,7 @@ export default defineConfig({
     // 页脚信息
     footer: {
       message: "基于 MIT 协议发布",
-      copyright: "Copyright © 2026-rust 八股文 社区贡献者",
+      copyright: "Copyright © 2026-Rust 八股文 社区贡献者",
     },
     // 顶部导航栏
     // https://vitepress.dev/reference/default-theme-config
