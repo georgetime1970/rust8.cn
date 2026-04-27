@@ -1,31 +1,22 @@
 <div align="center">
 
-<h1 style="background: -webkit-linear-gradient(
-    120deg,
-    hsl(0 100% 60%),
-    hsl(15 100% 60%) 35%,
-    hsl(23 96% 62%) 45%,
-    hsl(0 100% 60%) 65%,
-    hsl(358 58% 47%)
-  );
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;">🦀 Rust 八股文</h1>
+# 🦀 Rust 八股文
 
-<h2>🐯 更适合中国人的 Rust 教程</h2>
+**🐯 更适合中国人的 Rust 教程**
 
-<img style="height: 380px;" src="./docs/public/assets/logo/logo.jpg" />
+<img style="height: 350px;" src="./docs/public/assets/logo/logo.jpg" />
 
 <div style=" padding: 0 64px;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
-  gap: 10px;">
-<img style="height: 280px; margin-right: 10px;" src="./docs/public/assets/img/1.jpg" />
-<img style="height: 280px; margin-right: 10px;" src="./docs/public/assets/img/2.jpg" />
-<img style="height: 280px; margin-right: 10px;" src="./docs/public/assets/img/3.jpg" />
-<img style="height: 280px; margin-right: 10px;" src="./docs/public/assets/img/4.jpg" />
+  gap: 10px;
+  margin-bottom: 20px;">
+<img style="height:250px; margin-right: 10px;" src="./docs/public/assets/img/1.jpg" />
+<img style="height:250px; margin-right: 10px;" src="./docs/public/assets/img/2.jpg" />
+<img style="height:250px; margin-right: 10px;" src="./docs/public/assets/img/3.jpg" />
+<img style="height:250px; margin-right: 10px;" src="./docs/public/assets/img/4.jpg" />
 </div>
 
 ![Rust](https://img.shields.io/badge/Rust-orange?logo=rust&logoColor=white)
