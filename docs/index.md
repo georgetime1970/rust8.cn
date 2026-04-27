@@ -5,7 +5,7 @@ layout: home
 hero:
   tagline: 你的中文 Rust 枕边书
   image:
-    src: /assets/logo/logo.jpg
+    src: /assets/logo/logo.webp
     alt: Rust 八股文
   actions:
     - theme: brand

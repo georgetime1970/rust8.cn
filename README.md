@@ -1,8 +1,6 @@
 <div align="center">
 
-# 🦀 Rust 八股文
-
-<img style="height: 350px;" src="./docs/public/assets/logo/logo.jpg" />
+<img style="height: 350px;" src="./docs/public/assets/logo/logo.png" />
 
 <div style=" padding: 0 64px;
   display: flex;
@@ -10,18 +8,18 @@
   align-items: center;
   flex-wrap: wrap;
   gap: 10px;
-  margin-bottom: 20px;">
-<img style="height:200px; margin-right: 10px;" src="./docs/public/assets/img/1.jpg" />
-<img style="height:200px; margin-right: 10px;" src="./docs/public/assets/img/2.jpg" />
-<img style="height:200px; margin-right: 10px;" src="./docs/public/assets/img/3.jpg" />
-<img style="height:200px; margin-right: 10px;" src="./docs/public/assets/img/4.jpg" />
+  margin-bottom: 40px;">
+<img style="height:200px; margin-right: 10px;" src="./docs/public/assets/img/1.webp" />
+<img style="height:200px; margin-right: 10px;" src="./docs/public/assets/img/2.webp" />
+<img style="height:200px; margin-right: 10px;" src="./docs/public/assets/img/3.webp" />
+<img style="height:200px; margin-right: 10px;" src="./docs/public/assets/img/4.webp" />
 </div>
 
 ![Rust](https://img.shields.io/badge/Rust-orange?logo=rust&logoColor=white)
 
 </div>
 
----
+## 教程介绍
 
 本教程根据官方 Rust 教程、视频资料和相关书籍**整理**而成，章节结构基本参照官方教程，但融入了合理的调整和补充。你可以独立阅读，也可以配合官方教程使用。
 

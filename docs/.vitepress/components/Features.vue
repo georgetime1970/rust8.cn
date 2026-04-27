@@ -3,10 +3,10 @@
 
 <template>
   <div class="container">
-    <img src="/assets/img/1.jpg" alt="更易学" />
-    <img src="/assets/img/2.jpg" alt="更高效" />
-    <img src="/assets/img/3.jpg" alt="更完整" />
-    <img src="/assets/img/4.jpg" alt="更逻辑" />
+    <img src="/assets/img/1.webp" alt="更易学" />
+    <img src="/assets/img/2.webp" alt="更高效" />
+    <img src="/assets/img/3.webp" alt="更完整" />
+    <img src="/assets/img/4.webp" alt="更逻辑" />
   </div>
 </template>
 
