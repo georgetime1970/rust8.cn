@@ -14,6 +14,9 @@ hero:
     - theme: alt
       text: Rust 学习资料
       link: /Rust/more.md
+    # - theme: alt
+    #   text: 在 GitHub 上查看
+    #   link: https://github.com/georgetime1970/rust8.cn
 
 features:
   - icon: 🚀
