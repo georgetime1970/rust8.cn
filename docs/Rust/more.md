@@ -30,7 +30,7 @@
 
 ### 社区教程
 
-- [Rust 圣经](https://beatai.org/rust-course/)
+- [Rust 语言圣经](https://course.rs/)
 - [菜鸟教程 Rust 教程](https://www.runoob.com/rust/rust-tutorial.html)
 
 ### 视频教程
