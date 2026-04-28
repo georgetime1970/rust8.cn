@@ -3,7 +3,7 @@ import rustDirectory from "../Rust";
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
-  title: "Rust 八股文",
+  title: "Rust 八股文🦀",
 
   // base: '/Tutorial/', // GitHub 页面下部署站点，则需要设置此项,注意斜杠开头和结尾不能少！
   head: [

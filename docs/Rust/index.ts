@@ -2,7 +2,7 @@ const directory = {
   text: "Rust基础",
   items: [
     { text: "前言", link: "/Rust/0.前言" },
-    { text: "Rust介绍", link: "/Rust/0.1.rust介绍" },
+    { text: "Rust介绍", link: "/Rust/1.0.rust介绍" },
     { text: "安装并创建项目", link: "/Rust/1.1.安装并创建项目" },
     { text: "打印和格式化", link: "/Rust/1.2.打印和格式化" },
     { text: "变量和可变性", link: "/Rust/2.变量和可变性" },

@@ -30,6 +30,8 @@
 
 ### 社区教程
 
+- [轻松学习 Rust](https://rustycab.github.io/LearnRustEasy/chapter_1.html)
+- [Rust 入门秘籍](https://rust-book.junmajinlong.com/)
 - [Rust 语言圣经](https://course.rs/)
 - [菜鸟教程 Rust 教程](https://www.runoob.com/rust/rust-tutorial.html)
 
