@@ -640,6 +640,8 @@
 
 /* 主页主图 */
 .image-src {
+  max-width: none !important; /* 必须加上这一行 */
+  max-height: none !important; /* 必须加上这一行 */
   width: 380px !important;
   height: 380px !important;
 }

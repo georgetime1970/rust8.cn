@@ -14,4 +14,22 @@ hero:
     - theme: alt
       text: Rust 学习资料
       link: /Rust/more.md
+
+features:
+  - icon: 🚀
+    title: 更易学
+    details: 遵循"概念→原理→示例"的教学逻辑，符合中文学习习惯
+    # link: https://subscription.jiangyahan.com/
+  - icon: 🧩
+    title: 更完整
+    details: 覆盖 Rust 核心知识点，对难点章节进行补充和详细讲解
+    # link: https://typing.jiangyahan.com/
+  - icon: 🎯
+    title: 更清晰
+    details: 直接剖析概念本质，加入辅助理解和总结，帮助理解设计理念
+    # link: https://ipa.jiangyahan.com/
+  - icon: 🧭
+    title: 更逻辑
+    details: 按照知识逻辑重新梳理顺序，帮助理解和记忆
+    # link: https://tailwind.jiangyahan.com/
 ---

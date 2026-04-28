@@ -2,7 +2,7 @@
  https://vitepress.dev/zh/guide/extending-default-theme#layout-slots -->
 <script setup>
 import DefaultTheme from "vitepress/theme";
-import Features from "../components/Features.vue";
+// import Features from "../components/Features.vue";
 import Title from "../components/Title.vue";
 
 const { Layout } = DefaultTheme;
@@ -10,9 +10,10 @@ const { Layout } = DefaultTheme;
 
 <template>
   <Layout>
-    <template #home-features-before>
+    <!-- 改为原生 features 增加首页加载速度 -->
+    <!-- <template #home-features-before>
       <Features></Features>
-    </template>
+    </template> -->
     <template #home-hero-info-before> <Title></Title> </template>
   </Layout>
 </template>
