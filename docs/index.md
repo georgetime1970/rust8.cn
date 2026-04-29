@@ -10,10 +10,10 @@ hero:
   actions:
     - theme: brand
       text: 学习 Rust 八股文
-      link: /Rust/0.前言
+      link: /Rust/前言
     - theme: alt
       text: Rust 学习资料
-      link: /Rust/1.0.0.学习资料
+      link: /Rust/学习资料
     # - theme: alt
     #   text: 在 GitHub 上查看
     #   link: https://github.com/georgetime1970/rust8.cn
