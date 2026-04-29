@@ -13,7 +13,7 @@ hero:
       link: /Rust/0.前言
     - theme: alt
       text: Rust 学习资料
-      link: /Rust/more.md
+      link: /Rust/0.前言#学习资料
     # - theme: alt
     #   text: 在 GitHub 上查看
     #   link: https://github.com/georgetime1970/rust8.cn
