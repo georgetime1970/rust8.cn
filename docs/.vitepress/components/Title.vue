@@ -2,7 +2,7 @@
 
 <template>
   <div class="container1">
-    <span class="title">Rust 八股文</span>
+    <span class="title">Rust八股文</span>
     <br />
     <span class="text">适合中国人的 Rust 教程</span>
   </div>
