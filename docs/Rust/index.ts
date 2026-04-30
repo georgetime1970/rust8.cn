@@ -13,6 +13,7 @@ const directory = {
     { text: "函数", link: "/Rust/函数" },
     { text: "控制流", link: "/Rust/控制流" },
     { text: "内存和指针", link: "/Rust/内存和指针" },
+    { text: "作用域", link: "/Rust/作用域" },
     { text: "所有权", link: "/Rust/所有权" },
     { text: "所有权延申", link: "/Rust/所有权延申" },
     { text: "Slice切片", link: "/Rust/Slice切片" },
