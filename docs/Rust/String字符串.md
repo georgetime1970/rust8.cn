@@ -59,7 +59,7 @@ let s3 = String::from("toe");
 let s = format!("{s1}-{s2}-{s3}"); // format! 不获取所有权,s1、s2、s3 仍可使用
 ```
 
-> `format!` 和 `println!` 都是基于格式化字符串的宏,内部规则一致: [println!系列宏格式规则](./1.2.打印和格式化.md#println-系列宏格式规则)
+> `format!` 和 `println!` 都是基于格式化字符串的宏,内部规则一致: [println!系列宏格式规则](./打印和格式化.md#println-系列宏格式规则)
 
 **性能对比**
 
