@@ -236,3 +236,20 @@ fn main() {
 3. **第三步**: 将重复逻辑提取成 `trait`,然后在 `impl Trait for Struct` 中调用第一步写好的自有方法
 
 这样既保持代码封装性,又通过 trait 提供统一的外部接口.
+
+### 关于 Trait 的导入
+
+调用 Trait 中的方法时，**必须同时导入 Trait 本身**，即使某个类型已经实现了该 Trait：
+
+```rust
+use std::io::Read;  // 必须导入 Trait
+// 否则 file.read_to_string() 无法识别
+```
+
+原因在于：如果多个库都为同一类型实现了同名方法，不显式导入就会产生方法名冲突，编译器无法确定调用哪个。
+
+大多数成熟的 Rust 库（如 `tokio`、`diesel`）提供预导模块（Prelude），一次性导入常用 Trait：
+
+```rust
+use tokio::prelude::*;
+```

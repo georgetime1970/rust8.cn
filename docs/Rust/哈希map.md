@@ -1,73 +1,65 @@
 # 哈希 map
 
-`HashMap<K, V>` 是 Rust 标准库提供的一种哈希表(Hash Table)数据结构,用于存储具有映射关系的键值对(Key-Value pairs).
+`HashMap<K, V>` 是 Rust 标准库提供的键值对集合，通过哈希函数将键映射到存储位置，大多数操作具有 O(1) 的平均时间复杂度。与通过整数索引访问的 `Vec` 不同，`HashMap` 允许使用任何实现了 `Eq` 和 `Hash` trait 的类型作为键。
 
-- 本质就是一个键值对,键是唯一的
-- 类似于 `vector`,哈希 `map` 是同质的: 所有的键必须是相同类型,值也必须都是相同类型
-- 是整体所有权
-
-**1. 基本特性**
-
-- 非索引访问: 与通过整数索引访问的 `Vec` 不同,`HashMap` 允许使用任何实现了 `Eq` 和 `Hash` trait 的类型作为键(如 `String`、`i32` 等)来检索数据.
-- 键的唯一性: 每个键在 `map` 中只能存在一个.如果插入已有的键,旧值会被新值覆盖.
-- 堆内存分配: 与 `Vec` 类似,`HashMap` 的数据存储在堆(Heap)上,且它是动态增长的.
-- 无序性: 遍历 `HashMap` 时,元素的顺序是随机且不可预测的.
-- 所有权移动: `insert()` 方法会转移键和值的所有权到 `HashMap` 中.
-
-**2. 内部实现原理**
-
-- 哈希函数: 它使用哈希函数将键转换成一个数字(哈希值),以此决定数据在内存中的存储位置.
-- `Swiss Table` 算法: Rust 的 `HashMap` 默认采用了基于 `Google Swiss Table` 的高性能实现(通过 `hashbrown` crate 引入),这种算法在内存布局和缓存效率上表现卓越.
-- 安全性设计: 默认使用 `SipHash 1-3` 算法.虽然它比某些哈希算法稍慢,但能有效抵抗 `HashDoS` 攻击(一种通过精心构造冲突来使哈希表性能降级的拒绝服务攻击).
-
-## 新建一个哈希 map
-
-- 需要引入`std::collections::HashMap`
-- 所有的键必须是相同类型,值也必须都是相同类型
+`HashMap` 是同质的：所有键必须是相同类型，所有值也必须是相同类型。数据存储在堆上，插入时会获取键和值的所有权。遍历时元素顺序是随机且不可预测的。
 
 ```rust
-use std::collections::HashMap;
-let mut scores = HashMap::new();
+use std::collections::HashMap; // HashMap 不在 prelude 中，必须手动引入
+
+let mut scores: HashMap<String, i32> = HashMap::new();
 ```
 
-## 插入值到哈希 map
+## 内部实现
 
-- 使用 `insert(k, v)` 方法插入键值对
-- 如果键已存在,新值会覆盖旧值
-- `insert()` 方法会转移键和值的所有权到 `HashMap` 中
+Rust 的 `HashMap` 默认采用基于 **Google Swiss Table** 的高性能实现（通过 `hashbrown` crate 引入），在内存布局和缓存效率上表现卓越。默认哈希算法为 **SipHash 1-3**，它能有效抵抗 HashDoS 攻击（通过精心构造哈希冲突来降低哈希表性能的拒绝服务攻击），安全性高于速度。
+
+## 插入键值对
+
+使用 `insert(k, v)` 方法插入键值对。`insert()` 会获取键和值的所有权；如果键已存在，新值会覆盖旧值并返回 `Some(旧值)`，键不存在则返回 `None`：
 
 ```rust
 use std::collections::HashMap;
+
 let mut scores = HashMap::new();
 scores.insert(String::from("Blue"), 10);
-scores.insert(String::from("Yellow"), 50);
-println!("{scores:?}");
+let old = scores.insert(String::from("Blue"), 25); // 覆盖旧值
+println!("{old:?}"); // Some(10)
+println!("{scores:?}"); // {"Blue": 25}
 ```
 
-## 访问哈希 map 中的值
+## 访问值
 
-- 使用`get(&Q)`方法访问数据
-- `get` 方法返回 `Option<&V>`
+使用 `get(&key)` 方法访问值，返回 `Option<&V>`。通常配合 `copied()` 将 `Option<&V>` 转换为 `Option<V>`（适用于实现了 `Copy` 的类型），再用 `unwrap_or()` 提供默认值：
 
 ```rust
 use std::collections::HashMap;
+
 let mut scores = HashMap::new();
 scores.insert(String::from("Blue"), 10);
-scores.insert(String::from("Yellow"), 50);
 
-let team_name = String::from("Blue");
-let score = scores.get(&team_name).copied().unwrap_or(0);
-// copied() 的作用是将 Option<&i32> 转换成 Option<i32>
-// copied(): 仅限实现了 Copy 的类型(如 i32, bool, f64),极其高效(位拷贝)
-// cloned(): 适用于实现了 Clone 的类型(如 String, Vec),涉及 clone() 函数调用,可能较慢
+let score = scores.get("Blue").copied().unwrap_or(0); // 10
+let score = scores.get("Red").copied().unwrap_or(0);  // 键不存在，返回默认值 0
 ```
 
-## 遍历 HashMap
+> `copied()` 仅适用于实现了 `Copy` 的类型（如 `i32`、`bool`）。若值类型是 `String`、`Vec` 等，需改用 `cloned()`，它会调用 `clone()` 进行深拷贝。
 
-- 使用 `for` 语句遍历,获得引用不会转移所有权
+## 检查键是否存在
+
+使用 `contains_key()` 方法检查键是否存在，返回布尔值：
+
+```rust
+let has_blue = scores.contains_key("Blue"); // true
+let has_red  = scores.contains_key("Red");  // false
+```
+
+## 遍历
+
+使用 `for` 循环遍历，使用 `&` 符号获取引用，不转移所有权：
 
 ```rust
 use std::collections::HashMap;
+
 let mut scores = HashMap::new();
 scores.insert(String::from("Blue"), 10);
 scores.insert(String::from("Yellow"), 50);
@@ -77,76 +69,105 @@ for (key, value) in &scores {
 }
 ```
 
-## 更新哈希 map
+## 删除键值对
+
+使用 `remove()` 方法删除指定键的键值对，返回 `Option<V>`：键存在则返回 `Some(value)` 并删除，键不存在则返回 `None`：
+
+```rust
+let removed = scores.remove("Blue");   // Some(10)，已删除
+let removed = scores.remove("Ghost");  // None，键不存在
+```
+
+## 更新值
 
 ### 覆盖旧值
 
-- `HashMap` 的键是唯一的,重复插入相同键会覆盖原值
+直接再次 `insert()` 相同的键即可覆盖：
 
 ```rust
-use std::collections::HashMap;
-let mut scores = HashMap::new();
 scores.insert(String::from("Blue"), 10);
-scores.insert(String::from("Blue"), 25);
-println!("{scores:?}"); // {"Blue": 25}
+scores.insert(String::from("Blue"), 25); // 覆盖为 25
 ```
 
 ### 只在键不存在时插入
 
-- 使用 `entry(k).or_insert(v)` 方法
-- `entry(k)` 返回 `Entry` 枚举,表示键是否存在
+`entry(k).or_insert(v)` 在键不存在时插入默认值，并返回该值的可变引用；键已存在则直接返回现有值的可变引用，不做修改：
 
 ```rust
 use std::collections::HashMap;
+
 let mut scores = HashMap::new();
 scores.insert(String::from("Blue"), 10);
-scores.entry(String::from("Yellow")).or_insert(50); // Yellow 不存在,插入 50
-scores.entry(String::from("Blue")).or_insert(50); // Blue 存在,不插入
-println!("{scores:?}");
+
+scores.entry(String::from("Yellow")).or_insert(50); // Yellow 不存在，插入 50
+scores.entry(String::from("Blue")).or_insert(50);   // Blue 已存在，不修改
+println!("{scores:?}"); // {"Blue": 10, "Yellow": 50}
 ```
 
-### 根据旧值更新
+### 基于旧值更新
 
-- `entry().or_insert()` 返回值的可变引用,可直接修改
+`entry().or_insert()` 返回值的可变引用，可直接在原值基础上修改：
 
 ```rust
 // 统计文本中每个单词出现的次数
 use std::collections::HashMap;
+
 let text = "hello world wonderful world";
-let mut hash_map = HashMap::new();
+let mut map = HashMap::new();
+
 for word in text.split_whitespace() {
-    let count = hash_map.entry(word).or_insert(0); // 如果 word 不存在,插入 0 并返回可变引用;如果存在,直接返回可变引用
-    *count += 1;
+    let count = map.entry(word).or_insert(0);
+    *count += 1; // 解引用后修改
 }
-println!("{hash_map:?}"); // {"hello": 1, "world": 2, "wonderful": 1}
+println!("{map:?}"); // {"hello": 1, "world": 2, "wonderful": 1}
 ```
 
-## 综合例子
+## 合并两个 HashMap
+
+使用 `extend()` 方法将另一个 `HashMap` 的键值对合并进来。若存在重复的键，**来源 map 的值会覆盖目标 map 的值**：
 
 ```rust
-use std::collections::{HashMap, btree_map::Keys};
+use std::collections::HashMap;
 
-fn main() {
-    // 新建一个hashmap
-    let mut x: HashMap<i32, i32> = HashMap::new();
+let mut map1 = HashMap::new();
+map1.insert("one", 1);
+map1.insert("two", 2);
 
-    x.insert(0, 0); // 插入数据
-    x.insert(0, 1); // 覆盖相当于重新赋值
-    x.entry(1).or_insert(2); // 不存在 1键就插入2值
-    dbg!(&x);
+let mut map2 = HashMap::new();
+map2.insert("two", 22);   // 与 map1 重复，会覆盖
+map2.insert("three", 3);
 
-    // let y = x.get(&3); // 使用get安全取值,是一个Option
-    let y = x.get(&3).unwrap_or(&3); // 使用get安全取值
-    dbg!(&y);
-
-    // 遍历 map
-    for (k, v) in &x {
-        dbg!(k, v);
-    }
-
-    for map in x {
-        // dbg!(&map);
-        println!("{map:?}")
-    }
-}
+map1.extend(map2);
+println!("{map1:?}");    // {"one": 1, "two": 22, "three": 3}
 ```
+
+## 容量管理
+
+`HashMap` 会自动扩容，但也可以手动管理容量：
+
+```rust
+let mut map: HashMap<&str, i32> = HashMap::with_capacity(10); // 预分配容量
+println!("{}", map.len());      // 当前键值对数量：0
+println!("{}", map.capacity()); // 当前分配的容量：≥ 10
+
+map.insert("a", 1);
+map.shrink_to_fit(); // 缩减容量以贴近当前长度，减少内存浪费
+```
+
+## 自定义哈希算法
+
+默认的 SipHash 安全性高但速度偏保守。在明确不需要防御 HashDoS 攻击的场景（如游戏、本地数据处理），可以替换为更快的哈希算法：
+
+```rust
+use std::collections::HashMap;
+use std::hash::BuildHasherDefault;
+use twox_hash::XxHash64; // 需要在 Cargo.toml 中引入 twox-hash crate
+
+type FastHashMap<K, V> = HashMap<K, V, BuildHasherDefault<XxHash64>>;
+
+let mut map: FastHashMap<&str, i32> = FastHashMap::default();
+map.insert("one", 1);
+map.insert("two", 2);
+```
+
+> **注意**：使用自定义哈希算法会放弃 SipHash 的 HashDoS 防御能力，仅在明确了解风险的场合使用。
