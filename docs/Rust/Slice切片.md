@@ -2,6 +2,8 @@
 
 Rust 中的**切片（Slice）**是对某段连续内存数据的引用，不持有所有权。切片不仅是一种操作，也是一种独立的原始数据类型。
 
+初读这一章你可能会有点迷惑,当你学习完 [String字符串](./String字符串.md) 一章后,你会有更清晰的认知,不要着急,你先记住切片是一种操作,切片后会产生一个新的数据类型,叫切片类型。
+
 ## 切片操作语法
 
 假设 `s` 是可被切片的数据，切片语法如下：
@@ -84,7 +86,7 @@ println!("{:?}", arr);              // [1111, 22, 33, 44]
 
 ## 字符串切片 `&str` 的特殊性
 
-`String` 的切片类型是 `str`（引用形式为 `&str`），而**不是** `&[String]`。`&str` 和 `&String` 是两种不同的类型：
+`String` 的切片类型是 `str`（引用形式为 `&str`），而**不是** `&[String]`。`&str` 和 `&String` 是两种不同的类型(在 [String字符串](./String字符串.md)章节将详细介绍)：
 
 ```rust
 let s = String::from("hello world!");
@@ -115,8 +117,10 @@ print_message("world"); // ✅ 字符串字面量直接作为 &str
 ```rust
 let mut s = String::from("HELLO");
 let ss = &mut s[..];
-ss.make_ascii_lowercase();
+ss.make_ascii_lowercase(); // 1. 将 ASCII 字符转换为小写
 println!("{}", s); // hello
+ss.make_ascii_uppercase(); // 2. 将 ASCII 字符转换为大写
+println!("{}", s); // HELLO
 ```
 
 除此之外，没有其他原地修改字符串内容的方法。
@@ -127,9 +131,8 @@ println!("{}", s); // hello
 
 ```rust
 let s = "你好world";
-// let bad = &s[0..2]; // ❌ panic："你"是 3 字节，在字符中间切片
-
-let you = &s[0..3];    // ✅ "你" 恰好 3 字节
+// let bad = &s[0..2]; // [!code --] ❌ panic："你"是 3 字节，在字符中间切片
+let you = &s[0..3];    // [!code ++] ✅ "你" 恰好 3 字节
 
 // 推荐：使用迭代器避免手动计算字节偏移
 let first: String = s.chars().take(1).collect(); // "你"
@@ -155,7 +158,7 @@ println!("{}", arr.first().unwrap()); // 11，等价于 (&arr).first()
 
 ## 为什么切片只能通过引用使用
 
-`[T]` 和 `str` 属于 **DST（动态大小类型，Dynamically Sized Type）**：
+`[T]` 和 `str` 属于 **[DST（动态大小类型，Dynamically Sized Type）](./高级类型.md#动态大小类型和-sized-trait)**：
 
 - 编译时大小未知，无法直接分配栈空间
 - 必须通过引用使用，引用将其变为固定大小的胖指针

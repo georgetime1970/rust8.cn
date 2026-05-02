@@ -1,5 +1,7 @@
 # 高级 Trait
 
+前面介绍了 Trait 的基础用法：定义、实现、作为参数与返回值、Trait 对象。本章深入 Trait 的高级特性，包括：关联类型、泛型类型参数（默认类型参数）、同名方法的消歧义、超 Trait（Trait 继承）以及 newtype 模式。这些特性通常出现在库的设计和标准库的实现中，理解它们有助于读懂复杂的 Rust 代码。
+
 ## 关联类型
 
 关联类型是 `Trait` 定义里的"占位符",它能让不同的实现者为同一个 Trait 指定不同的具体类型.
@@ -93,7 +95,8 @@ trait ComplexTrait {
 - **泛型类型参数语法:** `trait TraitName<T>`
 - **默认泛型类型参数语法:** `trait TraitName<T=Type>`
 
-```rust{1,8,15,22}
+```rust{2,9,16,23}
+// 定义一个带泛型类型参数的 Trait
 trait Into<Rhs = Self> {
     fn into(self) -> Rhs;
 }
@@ -145,6 +148,8 @@ let result: Converter = c.into(); // 使用默认的 Rhs,得到 Converter
 let result: f64 = c.into::<f64>(); // 显式指定 Rhs
 ```
 
+> `instance.method::<Type>()` 是 Rust 中的 Turbo Fish（涡轮鱼 ::<>）语法，用于显式指定泛型类型参数。
+
 ### 使用默认泛型类型参数
 
 实现对 `+` 运算符的重载时,通常会用到默认泛型类型参数.比如我们想让 `Point` 结构体支持加法运算:
@@ -165,7 +170,7 @@ struct Point {
     y: i32,
 }
 
-// 实现 Add Trait,使用默认的 Rhs（即 Self,此处是 Point）
+// 为 Point 实现 Add Trait,使用默认的 Rhs（即 Self,此处是 Point）
 impl Add for Point {
     type Output = Point;
 
@@ -195,11 +200,13 @@ use std::ops::Add;
 struct Millimeters(u32);
 struct Meters(u32);
 
-// 实现 Add Trait,指定 Rhs 是 Meters
+// 为 Millimeters 实现 Add Trait,指定 Rhs 是 Meters
 impl Add<Meters> for Millimeters {
     type Output = Millimeters;
 
     fn add(self, rhs: Meters) -> Millimeters {
+        // self 是 Millimeters, rhs 是 Meters
+        // 将米转换成毫米后再相加
         Millimeters(self.0 + (rhs.0 * 1000))
     }
 }
@@ -224,6 +231,8 @@ fn main() {
 > 同一类型不能重复实现同一个 `Trait` 不是关联类型的特性,而是 Rust 的设计原则之一.
 >
 > 关联类型只是在不能重复实现的基础上,增加了对类型的明确指定和约束.
+>
+> 如果你需要同一类型实现同一个 `Trait` 多次,就必须使用泛型类型参数.
 
 ### 何时使用
 
@@ -236,7 +245,7 @@ fn main() {
 
 ## 在同名方法之间消歧义
 
-Rust 既不能避免一个 trait 与另一个 trait 拥有相同名称的方法,也不能阻止为同一类型同时实现这两个 trait.同时还可以直接在类型上实现一个与 trait 方法同名的方法.当调用这些同名方法时,需要告诉 Rust 我们想要使用哪一个.
+Rust 既不能避免一个 trait 与另一个 trait 拥有相同名称的方法,也不能阻止为同一类型同时实现这两个 trait.同时还可以直接在类型上实现一个与 trait 方法同名的方法.当调用这些同名方法时,需要告诉 Rust 我们想要使用哪一个方法.
 
 ### 普通方法消歧义
 
@@ -341,6 +350,8 @@ fn main() {
 
 超 trait 是指一个 trait 依赖于另一个 trait 的功能.通过使用超 trait,你可以在一个 trait 中声明它需要另一个 trait 的实现,从而在实现这个 trait 时自动获得另一个 trait 的功能.
 
+语法: `trait SuperTrait: SubTrait`
+
 ```rust{2,13,20}
 // 定义一个超 trait,要求实现者必须同时实现 Display 和 Debug
 trait SuperTrait: std::fmt::Display + std::fmt::Debug {
@@ -385,7 +396,7 @@ newtype 模式变相地打破了"外部 trait 不能在外部类型上实现"（
 
 ### 在外部类型上实现外部 trait
 
-假如想让 `Vec` 打印得更漂亮,但因为 `Vec` 和 `Display` 都是标准库定义的（孤儿规则）,你不能直接实现.
+假如想让 `Vec` 打印得更漂亮,但因为 `Vec` 和 `Display` 都是标准库定义的,你不能直接实现（孤儿规则）.
 
 ```rust
 use std::fmt;
@@ -416,9 +427,7 @@ fn main() {
 
 通过 newtype 模式,你可以创建一个新的类型来包装一个现有的类型,并为这个新类型实现特定的 Trait,从而实现类型安全和抽象.
 
-**新的类型来包装一个现有的类型**
-
-可以避免直接使用原始类型带来的潜在错误,比如误用或混淆不同的类型.
+用**新的类型来包装一个现有的类型**,可以避免直接使用原始类型带来的潜在错误,比如误用或混淆不同的类型.
 
 在 [使用自定义泛型类型参数](#使用自定义泛型类型参数) 例子中,使用 newtype 来表示单位:Millimeters 和 Meters 结构体都在 newtype 中封装了 u32 值.如果编写了一个有 Millimeters 类型参数的函数,不小心使用 Meters 或普通的 u32 值来调用该函数的程序是不能编译的
 

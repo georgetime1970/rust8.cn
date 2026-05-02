@@ -106,10 +106,10 @@ my-package/
 ```bash
 my-project/
 ├── Cargo.toml       # workspace 根配置
-├── add/
+├── add/             # library crate，也是一个package，提供 add 功能
 │   ├── Cargo.toml
 │   └── src/lib.rs
-└── main/
+└── main/            # binary crate，也是一个package，依赖 add package
     ├── Cargo.toml
     └── src/main.rs
 ```
@@ -193,6 +193,33 @@ fn main() {
     // factory::private_fn(); // ❌ 私有函数，编译报错
 }
 ```
+
+`mod` 也相当于其他语言中的导入语句：声明一个模块会将其内容引入当前作用域，未声明的模块无法访问。
+
+::: code-group
+
+```rust [src/factory.rs]
+// 文件名已经是模块名了，不需要再写 mod factory
+// 模块内的函数默认私有
+fn private_fn() {
+    println!("私有函数，外部无法调用");
+}
+
+// 加 pub 才能外部访问
+pub fn produce() {
+    println!("Produce something!");
+}
+```
+
+```rust [src/main.rs]
+mod factory; // 引入文件模块
+
+fn main() {
+    factory::produce();
+}
+```
+
+:::
 
 ### 可见性规则
 
@@ -288,7 +315,7 @@ fn main() {
 
 ## use 关键字
 
-每次都写完整路径很繁琐，`use` 将路径引入当前作用域，之后可直接使用：
+每次都写完整路径很繁琐，`use` 将路径引入当前作用域，简化调用：
 
 ```rust
 mod parent {
@@ -300,6 +327,10 @@ mod parent {
 }
 
 fn main() {
+    // 不使用 use，需要写完整路径
+    // parent::factory::produce();
+
+    // 使用 use 引入路径，简化调用
     use parent::factory::produce;
     produce();  // 直接调用，不需要写完整路径
 
@@ -339,6 +370,9 @@ pub mod server;
 pub use self::client::Client;
 // 重导出：调用者只需 use crate::network::Server，无需知道内部路径
 pub use self::server::Server;
+
+// 合并导出：一次性把 Client 和 Server 暴露出去
+pub use self::{client::Client, server::Server};
 ```
 
 ```rust [src/main.rs]
@@ -428,7 +462,7 @@ rand = "0.8.5"
 ::: code-group
 
 ```rust [src/main.rs]
-use rand::prelude::*;
+use rand::prelude::*; // 引入 rand 的预导出模块，包含常用功能
 
 fn main() {
     let mut rng = rand::thread_rng();

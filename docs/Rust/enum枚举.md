@@ -34,7 +34,7 @@ let sun = Week::Sunday as i32; // 7
 可以用 `#[repr(uN)]` 限制成员数值的范围，超出范围时编译报错：
 
 ```rust
-#[repr(u8)]  // 限定范围为 0..=255
+#[repr(u8)]        // 限定范围为 0..=255
 enum Level {
     Low = 1,
     Mid = 128,
@@ -184,9 +184,9 @@ impl IpAddr {
 
 fn main() {
     let mut home = IpAddr::V4(127, 0, 0, 1);
-    home.call(); // 使用不可变借用
-    home.call_mut(); // 使用可变借用
-    // home.call_once(); // 获取所有权后就不能再使用了
+    home.call();         // 使用不可变借用
+    home.call_mut();     // 使用可变借用
+    // home.call_once(); // 转移所有权后就不能再使用 home 变量了
 }
 ```
 

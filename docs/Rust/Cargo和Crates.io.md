@@ -1,266 +1,291 @@
-# Cargo 和 `Crates.io`
+# Cargo 与 Crates.io
 
-- 在 Rust 中,Cargo 是官方的包管理器和构建工具.它使得管理 Rust 项目变得非常简单,包括依赖管理、构建、测试和发布等功能.
-- `Crates.io` 是 Rust 的官方包注册中心,开发者可以在这里发布和分享他们的 Rust 库(称为 "crate").
+Cargo 是 Rust 的官方构建系统与包管理器，负责项目的创建、依赖下载、编译、测试和发布等全生命周期管理。[Crates.io](https://crates.io/) 是 Rust 的官方包注册中心，所有公开发布的 crate 都托管于此。本章介绍 Cargo 的进阶特性：编译配置定制、crate 发布、工作空间管理以及工具扩展。
 
-## 采用发布配置自定义构建
+## 发布配置（Release Profiles）
 
-**发布配置(release profiles)** 是预定义且可定制的配置文件集,它们包含不同的配置,允许程序员更灵活地控制代码编译的多种选项.每一种配置都独立于其他配置
+发布配置是一组预定义的编译器参数集合，用于控制**编译速度**与**运行性能**之间的权衡。Cargo 内置两个最常用的配置：
 
-发布配置(Release Profiles) 就是给 Rust 编译器准备的几套"预设方案".
+| 配置      | 触发命令                | 优化级别        | 适用场景                       |
+| --------- | ----------------------- | --------------- | ------------------------------ |
+| `dev`     | `cargo build`           | `opt-level = 0` | 日常开发，编译快，含调试信息   |
+| `release` | `cargo build --release` | `opt-level = 3` | 生产发布，编译慢，运行速度最优 |
 
-你可以把它想象成手机上的"省电模式"、"性能模式"和"拍照模式":
-
-### 它是做什么的？
-
-编译器在把你的代码变成 `.exe` 时,有很多开关可以拨动(比如: 要不要检查越界？要不要把代码压缩得更小？运行速度要多快？).
-
-发布配置就是把这些开关打包成几个固定的"套餐".
-
-### 两个最常用的"官方套餐"
-
-Rust 默认给你准备了两个最基础的配置:
-
-- `dev` 配置(运行 `cargo build` 时用):
-  - 目标: 让你写代码、调 Bug 最爽.
-  - 特点: 编译飞快,包含大量调试信息,但运行起来可能有点慢.
-- `release` 配置(运行 `cargo build --release` 时用):
-  - 目标: 让程序给用户用的时候最快.
-  - 特点: 编译器会花很长时间去拼命优化代码,删掉没用的调试信息.编译很慢,但运行速度极快.
-
-### "可定制"是什么意思？
-
-如果你觉得官方的"套餐"不合口味,你可以自己在 Cargo.toml 里改.
-
-比如,你想在开发模式下也让代码运行得快一点,你可以这样写:
+`opt-level` 控制编译器的优化强度，取值范围为 `0`–`3`，值越高优化越激进，编译耗时越长：
 
 ```toml
+# Cargo.toml
 [profile.dev]
-opt-level = 1 # 默认是 0(不优化),改写成 1 表示稍微优化一下
+opt-level = 1       # 默认 0，稍微优化，加快开发时的运行速度
 
 [profile.release]
-opt-level = 3 # 默认是 3(最高优化),你也可以改成 2 或者 0,甚至 -1(不优化)！
+opt-level = 3       # 默认 3，最高优化
 ```
 
-### 独立于其他配置
+每种配置互相独立，修改 `dev` 不会影响 `release`。完整的可调项（如调试信息、LTO、溢出检查等）可在 [Cargo 文档](https://doc.rust-lang.org/cargo/reference/profiles.html) 中查阅。
 
-意思是你改了 dev 的设置,完全不会影响到 release.它们是两套互不干扰的脚本.
+## 将 Crate 发布到 Crates.io
 
-### 总结成一句话
+### 编写文档注释
 
-"发布配置就是给编译器下的‘指令集’,让你能一键切换‘快速开发’(省时间)或‘追求性能’(省空间/提速)两种状态."
+Rust 使用 `///`（文档注释）为公开 API 生成 HTML 文档，支持 Markdown 语法，并且文档中的代码块在 `cargo test` 时会自动运行（文档测试）：
 
-## 将 crate 发布到 `Crates.io`
+> 在 [自动化测试](./自动化测试.md#文档测试) 中有详细介绍。
 
-### 优化文档
+````rust
+/// 将两个数相加。
+///
+/// # 示例
+///
+/// ```
+/// let result = my_crate::add(2, 3);
+/// assert_eq!(result, 5);
+/// ```
+pub fn add(a: i32, b: i32) -> i32 {
+    a + b
+}
+````
 
-- crate 是 Rust 中的一个包(库或二进制),它可以被其他项目依赖和使用.
+使用 `cargo doc --open` 可在浏览器中预览生成的文档。
 
-1. 在 crate 中需要编写文档注释来描述 crate 的功能和用法,在 [自动化测试](自动化测试.md#文档测试)中我们已经介绍过文档测试了.
-2. 为了让文档能更好的展示内部模块的层级,可以使用 `pub use` 语句重导出
-   - 重导出后,用户在使用时就不需要关心模块的层级结构了,可以直接通过 `use crate_name::function_name` 来使用函数,而不需要知道它是在哪个模块中的.
-   - 在文档中,重导出也会让函数直接显示在 crate 的根目录下,用户可以更方便地找到和使用它们.
-     ![重导出前示意图](./assets/18-1.jpg)
-     ![重导出后示意图](./assets/18-2.jpg)
+`//!` 注释用于描述整个模块或 crate 本身（通常写在 `src/lib.rs` 的顶部）：
 
-### 发布 crate
+```rust
+//! # My Crate
+//!
+//! 这是 crate 的整体说明文档。
+```
 
-1.  注册一个 [Crates.io](https://crates.io/) 账号并获取 API token.
+### 用 `pub use` 重导出优化 API
 
-    ```bash
-    # 使用 API token 登录 Cargo
-    $ cargo login
-    abcdefghijklmnopqrstuvwxyz012345
-    ```
+内部模块层级对开发者有意义，但对库的使用者来说往往是负担。`pub use` 可以将深层路径的类型提升到 crate 根，让用户无需关心内部结构：
+::: code-group
 
-    > 这个命令会把你的 API token 告诉 Cargo,并将其保存在本地的 ~/.cargo/credentials 文件中
+```rust [src/lib.rs]
+pub use self::kinds::PrimaryColor;
+pub use self::utils::mix;
 
-2.  在 `Cargo.toml` 中填写 crate 的元数据(如名称、版本、描述等).
+mod kinds {
+    pub struct PrimaryColor(pub u8, pub u8, pub u8);
+}
+mod utils {
+    use crate::kinds::PrimaryColor;
+    pub fn mix(c1: PrimaryColor, c2: PrimaryColor) -> PrimaryColor { todo!() }
+}
+```
 
-    ```toml
-    [package]
-    name = "guessing_game"  # crate 的名称,必须唯一
-    version = "0.1.0" # 版本号,遵循语义化版本规范
-    edition = "2024" # Rust 版本,建议使用最新的稳定版本
-    description = "A simple guessing game crate" # crate 的简短描述
-    authors = ["Your Name <your.email@example.com>"] # 作者信息
-    license = "MIT" # 许可证类型,建议使用开源许可证
-    ```
+:::
 
-3.  发布到 `Crates.io`.
+重导出后，用户可以直接写：
 
-    ```bash
-    $ cargo publish
-    ```
+::: code-group
 
-    > 这个命令会编译你的 crate,检查是否符合发布要求(如版本号唯一、依赖项正确等),然后将其上传到 `Crates.io`.
-    >
-    > 发布 crate 时务必小心,因为发布是永久性的.对应版本无法被覆盖,其代码也无法被删除.`Crates.io` 的一个主要目标,是充当代码的永久归档服务器,这样所有依赖 `Crates.io` 上 crate 的项目都能一直正常工作.而如果允许删除版本,就无法实现这一目标.不过,可发布的版本号数量并没有限制.
+```rust [src/main.rs]
+use my_crate::PrimaryColor;  // ✅ 无需 my_crate::kinds::PrimaryColor
+```
 
-4.  使用 cargo yank 从 Crates.io 撤回版本
+:::
+文档页面也会在 crate 根目录下直接显示这些类型，而不是埋在子模块里。
 
-    ```bash
-    $ cargo yank --vers 0.1.0
-    ```
+### 发布流程
 
-    > 撤回不会删除任何代码
-    >
-    > 这个命令会标记指定版本为"yanked",撤回某个版本会阻止新项目依赖这个版本,不过所有已经依赖它的项目仍然可以下载并继续依赖它.从本质上说,撤回意味着: 所有已有 Cargo.lock 的项目都不会因此损坏,而任何新生成的 Cargo.lock 都不会再使用被撤回的版本
+**1. 注册账号并获取 API Token**
+
+在 [crates.io](https://crates.io/) 用 GitHub 账号注册后，在账号设置页面生成 API Token，然后在终端登录：
+
+```bash
+cargo login
+# 输入你的 API Token
+```
+
+Token 会保存在 `~/.cargo/credentials` 文件中。
+
+**2. 填写 Cargo.toml 元数据**
+
+发布前必须填写以下字段（否则 `cargo publish` 会报错）：
+
+::: code-group
+
+```toml [Cargo.toml]
+[package]
+name        = "my_crate"      # 名称在 crates.io 上必须唯一
+version     = "0.1.0"         # 语义化版本（SemVer）
+edition     = "2024"
+description = "一句话描述这个 crate 的功能"
+license     = "MIT OR Apache-2.0"   # 开源项目推荐双协议
+```
+
+:::
+**3. 发布**
+
+```bash
+cargo publish
+```
+
+> 发布是**永久性**操作：同一版本号无法覆盖发布，代码也无法删除。Crates.io 的设计目标之一就是作为永久代码归档——所有依赖你的项目需要保证能一直正常构建。
+
+**4. 撤回版本（Yank）**
+
+如果某个版本存在严重 bug，可以将其标记为"撤回"：
+
+```bash
+cargo yank --vers 0.1.0       # 撤回
+cargo yank --vers 0.1.0 --undo  # 取消撤回
+```
+
+撤回**不删除代码**，仅阻止新项目将该版本加入 `Cargo.lock`。已有 `Cargo.lock` 的项目不受影响，仍可继续下载和使用。
 
 ## Cargo 工作空间
 
+当项目规模增大，往往需要将代码拆分为多个相关联的 crate。**工作空间**（Workspace）是一种将多个 crate 组织在同一目录下统一管理的机制，共享一份 `Cargo.lock` 和一个 `target` 输出目录。
+
 ### 创建工作空间
 
-- 下面示例了一个完整的创建多包工作空间的过程,包含一个二进制包 `adder` 和一个库包 `add_one`,其中 `adder` 依赖 `add_one`.
-- 通过不同的命令展示了如何构建和运行工作空间中的不同包,以及整个工作空间.
+以一个二进制 crate `adder` 依赖库 crate `add_one` 为例：
 
-1.  创建文件夹并进入:
+**第一步：** 新建目录，在其中创建工作空间根配置：
 
-    ```bash
-    $ mkdir add # 创建一个新的目录来存放工作空间
-    $ cd add # 进入目录
-    ```
+::: code-group
 
-2.  在文件夹中创建 `Cargo.toml` 文件并添加以下内容:
+```toml [add/Cargo.toml]
+[workspace]
+resolver = "3"
+```
 
-    ```toml
-    [workspace]
-    resolver = "3"
-    ```
+:::
 
-    > 这个文件不会有 `[package]` 部分,而是会以 `[workspace]` 部分开头,这样我们就能向工作空间添加成员.我们还会把 resolver 的值设为 "3",以便在工作空间中使用 Cargo 最新的依赖解析算法
+> 工作空间根 `Cargo.toml` 没有 `[package]` 部分，只有 `[workspace]`。`resolver = "3"` 启用 Cargo 最新的依赖解析算法。
 
-3.  在 add 目录运行 `cargo new` 新建 `adder` 二进制 crate
-
-    ```bash
-    $ cargo new adder
-    ```
-
-    > 在工作空间中运行 `cargo new` 时,新创建的包也会被自动加入工作空间 `Cargo.toml` 中 `[workspace]` 定义的 `members` 键,像这样:
-
-    ```toml
-    [workspace]
-    resolver = "3"
-    members = ["adder"]
-    ```
-
-4.  运行 `cargo build` 来构建工作空间,你的 add 目录中的文件应如下所示:
-
-    ```bash
-    ├── Cargo.lock
-    ├── Cargo.toml
-    ├── adder
-    │   ├── Cargo.toml
-    │   └── src
-    │       └── main.rs
-    └── target
-    ```
-
-5.  在工作空间中创建另一个名为 `add_one` 的库 crate
-
-    ```bash
-    $ cargo new add_one --lib
-    ```
-
-    > 现在顶层的 `Cargo.toml` 的 `members` 列表将会包含 `add_one` 路径:
-
-    ```toml
-    [workspace]
-    resolver = "3"
-    members = ["adder","add_one"]
-    ```
-
-    > 现在 `add` 目录应该有如下目录和文件
-
-    ```bash
-    ├── Cargo.lock
-    ├── Cargo.toml
-    ├── add_one
-    │   ├── Cargo.toml
-    │   └── src
-    │       └── lib.rs
-    ├── adder
-    │   ├── Cargo.toml
-    │   └── src
-    │       └── main.rs
-    └── target
-    ```
-
-6.  在 `add_one/src/lib.rs` 文件中,增加一个 `add_one` 函数
-
-    ```rust
-    pub fn add_one(x: i32) -> i32 {
-        x + 1
-    }
-    ```
-
-7.  让二进制包 `adder` 依赖包含库的 `add_one` 包
-
-    ```toml
-    [dependencies]
-    add_one = { path = "../add_one" }
-    ```
-
-    > Cargo 并不会假定工作空间中的 crate 会彼此依赖,因此我们需要显式声明这些依赖关系
-
-8.  在 `adder/src/main.rs` 中使用 `add_one` 函数
-
-    ```rust
-    use add_one::add_one;
-
-    fn main() {
-        let num = 5;
-        let result = add_one(num);
-        println!("{} + 1 = {}", num, result);
-    }
-    ```
-
-9.  运行 `cargo run -p adder` 来运行 `adder` 包
-
-    ```bash
-    $ cargo run -p adder
-    ```
-
-    > 通过 -p 参数加上包名,指定要运行工作空间中的哪个包
-
-10. 运行 `cargo test -p add_one` 来测试 `add_one` 包
-
-    ```bash
-    $ cargo test -p add_one
-    ```
-
-11. 运行 `cargo build -p add_one` 来构建 `add_one` 包
-
-    ```bash
-    $ cargo build -p add_one
-    ```
-
-12. 运行 `cargo build` 来构建整个工作空间
-
-    ```bash
-    $ cargo build
-    ```
-
-    > 运行 `cargo build` 会构建工作空间中的所有包
-
-### 依赖外部crate
-
-主要是解决工作空间中多个 `crate` 依赖同一个外部 `crate` 时,如何确保它们使用的是同一个版本的问题.
-
-- 工作空间只在顶层有一个 `Cargo.lock` 文件,而不是让每个 `crate` 目录里都各自有一个 `Cargo.lock`.这能确保所有 `crate` 使用的都是同一个版本的依赖,避免了版本冲突的问题.
-- 如果我们把 `rand` 包同时加到 `adder/Cargo.toml` 和 `add_one/Cargo.toml` 中,Cargo 会把它们都解析为同一个 `rand` 版本,并把结果记录到唯一的 `Cargo.lock` 中.
-
-## 使用 `cargo install` 安装二进制文件
-
-- `cargo install` 命令用于安装 Rust 的二进制工具(crate),它会从 `Crates.io` 上下载并编译指定的 `crate`,然后将生成的可执行文件放到系统的 PATH 中,方便用户在命令行中直接使用.
+**第二步：** 在 `add/` 目录下创建各个成员 crate：
 
 ```bash
-cargo install crate_name
+cargo new adder          # 二进制 crate
+cargo new add_one --lib  # 库 crate
 ```
+
+Cargo 会自动将新建的 crate 加入工作空间的 `members` 列表：
+
+::: code-group
+
+```toml [add/Cargo.toml]
+[workspace]
+resolver = "3"
+members  = ["adder", "add_one"]
+```
+
+:::
+此时目录结构如下：
+
+```
+add/
+├── Cargo.lock
+├── Cargo.toml          ← 工作空间根配置
+├── add_one/            ← add_one 库 crate
+│   ├── Cargo.toml
+│   └── src/lib.rs
+├── adder/              ← adder 二进制 crate
+│   ├── Cargo.toml
+│   └── src/main.rs
+└── target/             ← 所有 crate 共用同一个构建目录
+```
+
+**第三步：** 实现库函数：
+
+::: code-group
+
+```rust [add_one/src/lib.rs]
+pub fn add_one(x: i32) -> i32 {
+    x + 1
+}
+```
+
+:::
+
+**第四步：** 在 `adder/Cargo.toml` 中声明对 `add_one` 的依赖：
+
+::: code-group
+
+```toml [adder/Cargo.toml]
+[dependencies]
+add_one = { path = "../add_one" }
+```
+
+:::
+
+> Cargo 不会自动推断工作空间成员之间的依赖关系，必须**显式声明**。
+
+**第五步：** 在 `adder` 中使用 `add_one`：
+
+::: code-group
+
+```rust [adder/src/main.rs]
+use add_one::add_one;
+
+fn main() {
+    let num = 5;
+    println!("{} + 1 = {}", num, add_one(num));
+}
+```
+
+:::
+
+### 工作空间常用命令
+
+| 命令                    | 说明                       |
+| ----------------------- | -------------------------- |
+| `cargo build`           | 构建工作空间中的所有 crate |
+| `cargo build -p adder`  | 只构建指定 crate           |
+| `cargo run -p adder`    | 运行指定的二进制 crate     |
+| `cargo test`            | 测试所有 crate             |
+| `cargo test -p add_one` | 只测试指定 crate           |
+
+### 共享外部依赖
+
+工作空间在顶层维护**唯一一份** `Cargo.lock`。当多个成员 crate 都依赖同一个外部包（如 `rand`）时，Cargo 确保它们使用完全相同的版本，避免版本冲突，也减少重复编译：
+
+::: code-group
+
+```toml [adder/Cargo.toml]
+[dependencies]
+rand = "0.9"
+```
+
+```toml [add_one/Cargo.toml]
+[dependencies]
+rand = "0.9"
+```
+
+:::
+两个声明会被解析为同一个版本，记录在顶层 `Cargo.lock` 中，不会产生两份独立的依赖。
+
+## 使用 `cargo install` 安装命令行工具
+
+`cargo install` 从 Crates.io 下载、编译并安装二进制 crate，生成的可执行文件默认放在 `~/.cargo/bin/` 目录下（需确保该目录在 `$PATH` 中）：
+
+```bash
+cargo install ripgrep   # 安装 rg 命令行工具
+cargo install --list    # 查看已安装的工具
+```
+
+只有含有 `[[bin]]` 目标的 crate 才能通过此命令安装；纯库 crate 无法安装。
 
 ## Cargo 自定义扩展命令
 
-- `Cargo` 的设计允许你用新的子命令来扩展它,而不必修改 `Cargo` 本身.
-- 如果你的 `$PATH` 中有一个名为 `cargo-something` 的二进制文件,那么你就可以像运行 `Cargo` 子命令一样,通过 `cargo something` 来运行它.
-- 这类自定义命令也会在你运行 `cargo --list` 时显示出来.
-- `Cargo` 这种设计带来了一个非常方便的好处: 你可以用 `cargo install` 安装扩展,然后像使用 `Cargo` 内建工具一样运行它们.
+Cargo 支持通过外部二进制文件扩展子命令，无需修改 Cargo 本身。规则很简单：如果 `$PATH` 中存在名为 `cargo-something` 的可执行文件，就可以用 `cargo something` 来调用它，并且它会出现在 `cargo --list` 的列表中。
+
+这意味着可以用 `cargo install` 安装社区扩展工具，然后像内置命令一样使用：
+
+```bash
+cargo install cargo-watch   # 安装 cargo-watch
+cargo watch -x run          # 像内置命令一样使用
+```
+
+常见的社区扩展工具：
+
+| 工具            | 功能                                      |
+| --------------- | ----------------------------------------- |
+| `cargo-watch`   | 文件变更时自动重新编译/运行               |
+| `cargo-edit`    | 命令行管理依赖（`cargo add`、`cargo rm`） |
+| `cargo-expand`  | 展开宏，查看宏展开后的代码                |
+| `cargo-audit`   | 检查依赖中的已知安全漏洞                  |
+| `cargo-nextest` | 更快速的测试运行器                        |

@@ -43,7 +43,7 @@ let s: &str = "hello";    // 等价写法
 
 ## String 类型
 
-`String` 类型没有对应的字面量构建方式，只能通过方法构建：
+`String` 类型没有 `&str` 类型对应的字面量构建方式，只能通过方法构建：
 
 ```rust
 let mut s = String::new();         // 新建空字符串
@@ -70,13 +70,13 @@ let s = String::from("hello");
 
 ### 修改 String
 
-- `push_str()` 追加字符串 slice，不获取所有权；
-- `push()` 追加单个字符：
+- `push()` 追加单个字符，使用单引号，不获取所有权；
+- `push_str()` 追加字符串 slice，使用双引号，不获取所有权；
 
 ```rust
 let mut s = String::from("hello");
 s.push(' ');           // push() 追加单个字符，使用单引号
-s.push_str("world");   // push_str() 追加 &str，s2 所有权不转移
+s.push_str("world");   // push_str() 追加 &str，s 所有权不转移
 println!("{s}");       // hello world
 ```
 
@@ -103,7 +103,7 @@ println!("{}", s_str); // 输出：jun
 | `&s[0..3]` | `&str`   | 字符串切片的引用（胖指针）              |
 | `"hello"`  | `&str`   | 字面量，指向全局字面量区的胖指针        |
 
-> `str` 是 DST（动态大小类型），无法直接作为变量类型使用，必须通过引用 `&str` 来访问。关于 DST 的详细说明，请参阅 [字符串 String 延申](./String延申.md)。
+> `str` 是 DST（动态大小类型），无法直接作为变量类型使用，必须通过引用 `&str` 来访问。关于 `str` 是 DST 的详细说明，请参阅 [字符串 String 延申](./String延申.md#为什么-str-是-dst)。
 
 ## 字符串拼接
 
@@ -137,14 +137,14 @@ let s = format!("{s1}-{s2}-{s3}"); // s1、s2、s3 均可继续使用
 
 ## 字符串索引与切片
 
-字符串不支持直接整数索引，因为 Rust 的字符串是 UTF-8 编码，一个字符可能占 1 到 4 个字节，整数索引的语义不明确：
+字符串不支持直接整数索引，只能通过切片访问，因为 Rust 的字符串是 UTF-8 编码，一个字符可能占 1 到 4 个字节，整数索引的语义不明确：
 
 ```rust
 let s = "hello";
 // let c = s[0];  // ❌ 编译错误：不支持直接整数索引
 ```
 
-使用范围切片时，必须在字符边界处切割，否则会 panic：
+使用切片时，必须在字符边界处切割，否则会 panic：
 
 ```rust
 let s = "Здравствуйте"; // 西里尔字母，每个字符 2 字节

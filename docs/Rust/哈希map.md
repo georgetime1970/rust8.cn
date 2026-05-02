@@ -1,12 +1,13 @@
 # 哈希 map
 
-`HashMap<K, V>` 是 Rust 标准库提供的键值对集合，通过哈希函数将键映射到存储位置，大多数操作具有 O(1) 的平均时间复杂度。与通过整数索引访问的 `Vec` 不同，`HashMap` 允许使用任何实现了 `Eq` 和 `Hash` trait 的类型作为键。
+`HashMap<K, V>` 是 Rust 标准库提供的键值对集合，通过哈希函数将键映射到存储位置，大多数操作具有 [O(1) 的平均时间复杂度](./0.基础概念.md#算法复杂度)。与通过整数索引访问的 `Vec` 不同，`HashMap` 允许使用任何实现了 `Eq` 和 `Hash` trait 的类型作为键。
 
 `HashMap` 是同质的：所有键必须是相同类型，所有值也必须是相同类型。数据存储在堆上，插入时会获取键和值的所有权。遍历时元素顺序是随机且不可预测的。
 
 ```rust
 use std::collections::HashMap; // HashMap 不在 prelude 中，必须手动引入
 
+// 创建一个空的 HashMap，键类型为 String，值类型为 i32
 let mut scores: HashMap<String, i32> = HashMap::new();
 ```
 
