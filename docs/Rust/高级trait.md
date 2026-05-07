@@ -96,8 +96,8 @@ trait ComplexTrait {
 
 ### 定义语法
 
-- **泛型类型参数语法:** `trait TraitName<T>`
-- **默认泛型类型参数语法:** `trait TraitName<T=Type>`
+- **泛型类型参数语法: `trait TraitName<T>`**
+- **默认泛型类型参数语法: `trait TraitName<T=Type>`**
 
 ```rust{2,9,16,23}
 // 定义一个带泛型类型参数的 Trait
@@ -253,7 +253,7 @@ Rust 既不能避免一个 trait 与另一个 trait 拥有相同名称的方法,
 
 ### 普通方法消歧义
 
-**语法:** `TraitName::method(&instance)`
+**语法: `TraitName::method(&instance)`**
 
 当同一个类型实现多个 `Trait`,并且这些 `Trait` 中有同名的方法时,Rust 无法确定我们想要调用哪个方法.
 
@@ -306,7 +306,7 @@ fn main() {
 
 ### 完全限定语法
 
-**语法:** `<Type as Trait>::method`
+**语法: `<Type as Trait>::method`**
 
 当同一个类型实现多个 `Trait`,并且这些 `Trait` 中有同名的**关联函数**时（没有 `self` 参数）,可以使用完全限定语法来调用特定的关联函数.
 
@@ -354,7 +354,7 @@ fn main() {
 
 超 trait 是指一个 trait 依赖于另一个 trait 的功能.通过使用超 trait,你可以在一个 trait 中声明它需要另一个 trait 的实现,从而在实现这个 trait 时自动获得另一个 trait 的功能.
 
-语法: `trait SuperTrait: SubTrait`
+**语法: `trait SuperTrait: SubTrait`**
 
 ```rust{2,13,20}
 // 定义一个超 trait,要求实现者必须同时实现 Display 和 Debug
