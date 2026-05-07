@@ -1,4 +1,4 @@
-# 字符串 String 延申
+# String 字符串延申
 
 ## `str`、`&str` 与 `String` 的关系
 

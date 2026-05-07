@@ -16,6 +16,13 @@ pub struct Vec<T> {
 
 ## 新建 vector
 
+**语法: `Vec::new()`、`Vec::from()`、`vec![]` 宏、`Vec::with_capacity()`**
+
+- `Vec::new()`: 创建一个空的 `Vec`，需要显式类型标注.
+- `Vec::from()`: 从数组或切片创建 `Vec`，可自动推导类型.
+- `vec![]` 宏: 创建 `Vec`，可自动推导类型，支持重复元素语法 `[value; count]`.
+- `Vec::with_capacity()`: 预分配容量，适合已知元素数量时使用，避免频繁扩容带来的性能损失.
+
 ```rust
 // Vec::new 函数 创建空 Vec（需显式类型标注）
 let v: Vec<i32> = Vec::new();
@@ -42,7 +49,9 @@ let mut v: Vec<i32> = Vec::with_capacity(10);
 
 ## 增加元素
 
-- 使用 `push()` 方法添加元素到末尾
+**语法: `push(value)`**
+
+`push()` 方法添加元素到末尾
 
 ```rust
 let mut v = vec![1, 2, 3, 4, 5]; // 必须声明 mut
@@ -52,6 +61,8 @@ v.push(6);
 > `push()` 方法会获得 vector 的可变引用,vector 必须声明为 `mut`
 
 ## 读取元素
+
+**语法: `[]` 或 `get(index)`**
 
 - 使用 `[]` 直接索引读取元素
 - 使用 `get()` 方法读取元素
@@ -77,7 +88,7 @@ match third {
 
 ## 遍历 vector 中的元素
 
-- 使用 `for` 循环遍历不可变引用
+- 使用 `for` 循环遍历**不可变引用**
 
 ```rust
 let v = vec![100, 32, 57];
@@ -88,7 +99,7 @@ for i in &v {
 }
 ```
 
-- 使用 `for` 循环遍历可变引用修改元素
+- 使用 `for` 循环遍历**可变引用**修改元素
 
 ```rust
 let mut v = vec![100, 32, 57];
@@ -99,7 +110,7 @@ for i in &mut v {
 }
 ```
 
-- 使用迭代器方法进行功能式编程
+- 使用 `for` 循环直接**获得所有权**,消耗 vector
 
 ```rust
 let v = vec![100, 32, 57];

@@ -1,4 +1,4 @@
-# 字符串 String
+# String 字符串
 
 Rust 有两种字符串类型：`str` 和 `String`。其中 `str` 是 `String` 的**切片类型**，即 `str` 类型的字符串值是 `String` 类型字符串值的一部分或全部。
 
