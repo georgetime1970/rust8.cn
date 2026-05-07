@@ -642,8 +642,8 @@
 .image-src {
   max-width: none !important; /* 必须加上这一行 */
   max-height: none !important; /* 必须加上这一行 */
-  width: 380px !important;
-  height: 380px !important;
+  width: 300px !important;
+  height: 300px !important;
 }
 
 @media (max-width: 768px) {

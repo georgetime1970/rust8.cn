@@ -1,4 +1,8 @@
-﻿# 包、Crates 与模块
+﻿---
+description: 介绍 Rust 的包（Package）、Crate 与模块（Module）等模块系统核心概念，帮助理解 Rust 项目的组织结构。
+---
+
+# 包、Crates 与模块
 
 Rust 的模块系统由四个层级概念组成：**Workspace（工作空间）**、**Package（包）**、**Crate**、**Module（模块）**，范围从大到小。理解这四个概念是理解 Rust 项目组织方式的基础。
 

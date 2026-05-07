@@ -1,3 +1,7 @@
+---
+description: 本文详细介绍 Rust 官方构建系统 Cargo 及包注册中心 Crates.io，包括发布配置、crate 发布、工作空间管理和工具扩展等进阶特性，帮助开发者高效管理和发布 Rust 项目。
+---
+
 # Cargo 与 Crates.io
 
 Cargo 是 Rust 的官方构建系统与包管理器，负责项目的创建、依赖下载、编译、测试和发布等全生命周期管理。[Crates.io](https://crates.io/) 是 Rust 的官方包注册中心，所有公开发布的 crate 都托管于此。本章介绍 Cargo 的进阶特性：编译配置定制、crate 发布、工作空间管理以及工具扩展。

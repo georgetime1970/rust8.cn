@@ -1,3 +1,7 @@
+---
+description: 详细讲解 Rust 中 str、&str 和 String 的关系、区别及其内存模型，帮助理解字符串类型的本质和使用场景。
+---
+
 # String 字符串延申
 
 ## `str`、`&str` 与 `String` 的关系

@@ -1,3 +1,7 @@
+---
+description: 本文详细介绍了 Rust 语言中的字符串类型，包括 String 和 str 的区别、底层实现、用法示例及常见操作，帮助读者深入理解和高效使用 Rust 字符串。
+---
+
 # String 字符串
 
 Rust 有两种字符串类型：`str` 和 `String`。其中 `str` 是 `String` 的**切片类型**，即 `str` 类型的字符串值是 `String` 类型字符串值的一部分或全部。
