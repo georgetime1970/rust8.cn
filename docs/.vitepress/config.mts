@@ -26,6 +26,10 @@ export default defineConfig({
     ["meta", { name: "twitter:title", content: "Rust 八股文🦀" }],
     ["meta", { name: "twitter:description", content: "Rust 八股文 -- 更适合中国人的 Rust 教程,你的中文 Rust 枕边书" }],
     ["meta", { name: "twitter:image", content: "https://rust8.cn/assets/logo/logo.webp" }],
+    // 站点验证
+    ["meta", { name: "msvalidate.01", content: "AB30D4CB3862B6C86DAC6EF49D710C6A" }],
+    ["meta", { name: "google-site-verification", content: "697GvCEem1STAYS7y5BDIpz7Y28YdoKxouo3UStRfr4" }],
+    ["meta", { name: "baidu-site-verification", content: "codeva-6fA4CDeEqo" }],
   ],
 
   // markdown 配置
