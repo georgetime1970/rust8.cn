@@ -1,16 +1,21 @@
 ﻿---
-description: 本文介绍 Rust 语言中的 struct 结构体，包括其定义方式、三种结构体类型（经典结构体、元组结构体、类单元结构体），以及相关用法和注意事项，帮助读者理解和掌握 Rust 中自定义数据类型的使用。
+description: 本文介绍 Rust 语言中的 struct 结构体，包括其定义方式、三种结构体类型(经典结构体、元组结构体、类单元结构体)，以及相关用法和注意事项，帮助读者理解和掌握 Rust 中自定义数据类型的使用。
 ---
 
 # Struct 结构体
 
 `struct` 是 Rust 中最重要的自定义数据类型，用于将相关联的数据组织在一起。它类似于面向对象语言中的"类"，`struct` 的实例类似于"对象"——都以键值对的方式存储数据，并可以附加方法。
 
-Rust 中有三种结构体：**经典结构体**、**元组结构体**、**类单元结构体**。
+Rust 中有三种结构体：[**经典结构体**](#经典结构体-named-struct)、[**元组结构体**](#元组结构体-tuple-struct)、[**类单元结构体**](#类单元结构体-unit-like-struct)。
 
-## 定义 struct
+## 定义 Struct
 
-### 经典结构体（Named Struct）
+Rust 社区推荐使用以下命名规范：
+
+- 结构体名使用**帕斯卡命名法**(`PascalCase`)
+- 字段名使用**蛇形命名法**(`snake_case`)
+
+### 经典结构体(Named Struct)
 
 字段有名称的结构体，最常用的形式。
 
@@ -22,14 +27,49 @@ struct User {
 }
 ```
 
-- 结构体名使用**帕斯卡命名法**（`PascalCase`）
-- 字段名使用**蛇形命名法**（`snake_case`）
 - 每个字段必须显式指定类型
 - 结构体定义本身不占用内存，只有实例化后才占用
 
-### 元组结构体（Tuple Struct）
+### 元组结构体(Tuple Struct)
 
 字段没有名称、只有类型的结构体，通过索引访问字段。
+
+```rust
+struct Color(i32, i32, i32);
+struct Point(i32, i32, i32);
+```
+
+### 类单元结构体(Unit-like Struct)
+
+没有任何字段的空结构体，通常用于为某个类型实现 Trait 而不需要存储数据的场景。
+
+```rust
+struct AlwaysEqual;
+```
+
+## 实例化 Struct
+
+### 经典结构体实例化
+
+经典结构体实例化时需要为每个字段指定值，字段顺序不重要.
+
+```rust
+struct User {
+    name: String,
+    age: u32,
+    email: String,
+}
+
+let san = User {
+    name: String::from("zhangsan"),
+    age: 18,
+    email: String::from("123@gmail.com"),
+};
+```
+
+### 元组结构体实例化
+
+元组结构体实例化时直接传入字段值，字段顺序必须与定义一致.
 
 ```rust
 struct Color(i32, i32, i32);
@@ -41,30 +81,14 @@ let origin = Point(0, 0, 0);
 
 > `black` 和 `origin` 是**不同的类型**，尽管内部字段完全相同。元组结构体为相同结构赋予了不同的语义，适合表达"颜色"和"坐标"这类有明确含义但结构相同的数据。
 
-### 类单元结构体（Unit-like Struct）
+### 类单元结构体实例化
 
-没有任何字段的空结构体，通常用于为某个类型实现 Trait 而不需要存储数据的场景。
+类单元结构体实例化时直接使用类型名即可，无需括号或字段值.
 
 ```rust
 struct AlwaysEqual;
 
-let subject = AlwaysEqual;
-```
-
-## 实例化 struct
-
-实例化时**所有字段都必须赋值**，字段顺序可与定义不同：
-
-```rust
-let san = User {
-    name: String::from("zhangsan"),
-    age: 18,
-    email: String::from("123@gmail.com"),
-};
-
-let black = Color(0, 0, 0);
-let origin = Point(0, 0, 0);
-let subject = AlwaysEqual;
+let subject = AlwaysEqual; // 直接使用类型名实例化
 ```
 
 ### 字段初始化简写
@@ -90,10 +114,10 @@ let san = User {
 // 访问经典结构体字段
 println!("{}", san.name);
 
-// 访问元组结构体字段（索引）
+// 访问元组结构体字段(索引)
 println!("{}", black.0);
 
-// 修改字段（实例必须是 mut）
+// 修改字段(实例必须是 mut)
 let mut san = User {
     name: String::from("zhangsan"),
     age: 18,
@@ -118,8 +142,8 @@ let new_san = User {
 
 **所有权注意事项**：`..` 语法本质上是字段级别的赋值，遵循所有权规则：
 
-- 实现了 `Copy` 的字段（如 `u32`）会自动复制，原实例中的该字段仍然有效
-- 未实现 `Copy` 的字段（如 `String`）会发生 Move，原实例中的该字段将失效
+- 实现了 `Copy` 的字段(如 `u32`)会自动复制，原实例中的该字段仍然有效
+- 未实现 `Copy` 的字段(如 `String`)会发生 Move，原实例中的该字段将失效
 
 ```rust
 let user2 = User {
@@ -141,11 +165,11 @@ let user2 = User {
 };
 ```
 
-> **部分移动（Partial Move）**：结构体中的非 `Copy` 字段被 Move 后，整个实例进入"不完整"状态。此时无法整体使用该实例（整体赋值、整体传参等），但仍然可以单独访问**未被移走的字段**。若后续对已移走的字段重新赋值，该字段重新归该实例所有，实例恢复完整状态。
+> **部分移动(Partial Move)**：结构体中的非 `Copy` 字段被 Move 后，整个实例进入"不完整"状态。此时无法整体使用该实例(整体赋值、整体传参等)，但仍然可以单独访问**未被移走的字段**。若后续对已移走的字段重新赋值，该字段重新归该实例所有，实例恢复完整状态。
 
 ## 调试输出
 
-直接用 `{}` 格式化输出结构体会编译报错。需要在结构体定义前加上 `#[derive(Debug)]` 派生宏，然后使用 `{:?}`（单行）或 `{:#?}`（多行缩进）格式：
+直接用 `{}` 格式化输出结构体会编译报错。需要在结构体定义前加上 `#[derive(Debug)]` 派生宏，然后使用 `{:?}`(单行)或 `{:#?}`(多行缩进)格式：
 
 ```rust
 #[derive(Debug)]
@@ -182,8 +206,8 @@ let age = dbg!(san.age); // 打印 san.age 并将值绑定给 age
 
 ```rust
 impl Struct {
-    fn xxx(&self)  →  方法（method）
-    fn xxx()       →  关联函数（associated function）
+    fn xxx(&self)  →  方法(method)
+    fn xxx()       →  关联函数(associated function)
 }
 ```
 
@@ -197,7 +221,7 @@ impl Struct {
 | `&self`     | **不可变借用**，只读，调用后实例仍可用     |
 | `&mut self` | **可变借用**，可修改字段，调用后实例仍可用 |
 
-> `&self` 是 `self: &Self` 的语法糖。`Self`（大写）表示当前结构体类型本身，`self`（小写）表示调用方法的具体实例。
+> `&self` 是 `self: &Self` 的语法糖。`Self`(大写)表示当前结构体类型本身，`self`(小写)表示调用方法的具体实例。
 
 ```rust
 impl User {
@@ -252,14 +276,14 @@ let san = User::new("zhangsan".to_string(), 18, "123@gmail.com".to_string());
 
 ### 自动引用与解引用
 
-Rust 中调用方法时（`.` 运算符），编译器会**自动**添加 `&`、`&mut` 或 `*` 来匹配方法签名，无需手动处理：
+Rust 中调用方法时(`.` 运算符)，编译器会**自动**添加 `&`、`&mut` 或 `*` 来匹配方法签名，无需手动处理：
 
 ```rust
 p.distance(&q);        // Rust 自动转换为 (&p).distance(&q)
 box_val.method();      // 自动解引用 Box<T>，等价于 (*box_val).method()
 ```
 
-这是 Rust 与 C/C++ 的重要区别：C++ 需要区分 `.`（对象调用）和 `->`（指针调用），而 Rust 统一用 `.`，编译器自动完成引用与解引用的推导。
+这是 Rust 与 C/C++ 的重要区别：C++ 需要区分 `.`(对象调用)和 `->`(指针调用)，而 Rust 统一用 `.`，编译器自动完成引用与解引用的推导。
 
 除方法调用外，以下场景也会触发自动解引用：
 

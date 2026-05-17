@@ -23,7 +23,7 @@
 
 ## 教程介绍
 
-这个教程是根据 [官方 Rust 教程](https://doc.rust-lang.org/stable/book/index.html) 、视频资料和相关书籍 **整理** 而成的 **Rust入门教程** ，章节结构顺序基本参照官方教程，但融入了合理的调整和补充,以减轻学习难度。某些章节也加入了知识点的补充和个人理解。你可以独立阅读此教程，也可以配合官方教程使用。
+这个教程是根据 [官方 Rust 教程](https://doc.rust-lang.org/book/index.html) 、视频资料和相关书籍 **整理** 而成的 **Rust入门教程** ，章节结构顺序基本参照官方教程，但融入了合理的调整和补充,以减轻学习难度。某些章节也加入了知识点的补充和个人理解。你可以独立阅读此教程，也可以配合官方教程使用。
 
 我的目标是让这个教程成为一个**更符合中国人学习习惯的 Rust 入门资源**，降低学习难度，提供更清晰的概念解释和逻辑顺序,也希望成为 Rust 学习者的枕边书,遇到概念上的问题随时查找.
 
@@ -98,11 +98,15 @@
 
 - [@georgetime1970](https://github.com/georgetime1970)
 
+## 开源协议
+
+本教程采用 [MIT License](https://choosealicense.com/licenses/mit/) 开源协议，允许任何人自由使用、修改和分发本教程的内容，但需要保留原作者的版权声明和许可信息。
+
 ## 学习交流
 
 如果你有任何关于 Rust 学习的问题，或者想要交流学习经验，欢迎加入我们的学习交流群：
 
-- QQ 群: 1087171867 (Rust 八股文交流)
+- QQ 群: [1087171867](https://qun.qq.com/universal-share/share?ac=1&authKey=B1mzVcMJUdYRMNe%2Fgtl%2B9it3McscEemE54kvIN%2F5SbSoz%2Ba506ZLBsNd0ZQ8fs8R&busi_data=eyJncm91cENvZGUiOiIxMDg3MTcxODY3IiwidG9rZW4iOiJBc05NMmJvRmZQWWs1RVAwTk5QSU5jaU1KSHlqbUFOMmVGVFpvd2ZpRjJ1N1BiNk1lQlhCR3FFYzZOUjA4ZCtVIiwidWluIjoiMjU5NTMwMzE3NCJ9&data=iOqUCQWpRrrpHw8MojlP3KVSHECzP2yAEYv-Ykvh04SbLhcjl_ZZDSnxiS5rVAKUMLRptdg4qZeQvxl5x9liJQ&svctype=4&tempid=h5_group_info) (Rust 八股文交流)
 
 ## 本地部署
 
