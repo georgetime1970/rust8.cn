@@ -233,7 +233,7 @@ println!("{:?}", home);                  // 输出: V4(127, 0, 0, 255)
 
 ### 方法
 
-方法的第一个参数是 `self` 的某种形式，含义与 `struct` 方法完全相同（参见 [struct 方法](./struct结构体.md#方法)）：
+方法的第一个参数是 `self` 的某种形式，含义与 `struct` 方法完全相同（参见 [struct 方法](./Struct结构体.md#方法)）：
 
 ```rust
 impl IpAddr {
