@@ -1,3 +1,4 @@
+// 此文件是目录结构
 const directory = {
   text: "Rust基础",
   items: [
@@ -49,3 +50,5 @@ const directory = {
   ],
 };
 export default directory;
+
+// (:)([\u4e00-\u9fa5]+) -> $1 $2
