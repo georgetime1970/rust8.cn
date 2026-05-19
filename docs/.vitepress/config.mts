@@ -31,16 +31,13 @@ export default defineConfig({
     ["meta", { name: "google-site-verification", content: "697GvCEem1STAYS7y5BDIpz7Y28YdoKxouo3UStRfr4" }],
     ["meta", { name: "baidu-site-verification", content: "codeva-6fA4CDeEqo" }],
     // Baidu Analytics (百度统计)
+    // 百度统计
     [
       "script",
-      {},
-      `var _hmt = _hmt || [];
-      (function() {
-        var hm = document.createElement("script");
-        hm.src = "https://hm.baidu.com/hm.js?3fe7d816e724c32010c7e0e8f8c8c288";
-        var s = document.getElementsByTagName("script")[0];
-        s.parentNode.insertBefore(hm, s);
-      })();`,
+      {
+        defer: "true",
+        src: "https://hm.baidu.com/hm.js?3fe7d816e724c32010c7e0e8f8c8c288",
+      },
     ],
   ],
 
