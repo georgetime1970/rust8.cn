@@ -41,7 +41,7 @@ let slice = &arr[..n]; // ✅ 取前 3 个元素
 
 ### 切片类型 `[T]` 与切片引用 `&[T]`
 
-`[T]` 是**切片类型**(DST,编译时大小未知),`&[T]` 是**切片的引用类型**(固定 16 字节).
+`[T]` 是**切片类型**([DST](./高级类型.md#动态大小类型-dst),编译时大小未知),`&[T]` 是**切片的引用类型**(胖指针,固定 16 字节).
 
 由于切片的长度在编译时无法确定(边界可能是运行时变量),编译器不允许直接使用 `[T]`,**在 Rust 中几乎总是使用切片的引用 `&[T]`**:
 
@@ -49,8 +49,8 @@ let slice = &arr[..n]; // ✅ 取前 3 个元素
 let arr = [11, 22, 33, 44, 55];
 let n: usize = 3;
 
-let slice_direct: [i32] = arr[0..n]; // ❌ 编译错误: [T] 大小未知,无法直接使用
-let slice_ref: &[i32]   = &arr[0..n]; // ✅ 通过引用使用切片
+let slice_direct: [i32] = arr[0..n];  //[!code error] ❌ 编译时大小未知,无法直接使用
+let slice_ref: &[i32]   = &arr[0..n]; // ✅ 通过引用使用切片,大小固定为 16 字节(胖指针)
 ```
 
 > 虽然 `[T]` 和 `&[T]` 概念上有区别,但因为实际中几乎总是通过引用使用切片,所以日常讨论中两者经常混用,统称"切片".
@@ -81,7 +81,7 @@ println!("{:?}", arr);              // [1111, 22, 33, 44]
 | `[T; N]`(数组) | `&[T]`       | 固定大小数组               |
 | `Vec<T>`       | `&[T]`       | 动态数组                   |
 | `String`       | `&str`       | 字符串切片,类型名特殊      |
-| `&str`         | `&str`       | 对字符串字面量或切片再切片 |
+| `str` `&str`   | `&str`       | 对字符串字面量或切片再切片 |
 
 注意区分数组和切片的类型写法:
 
@@ -90,7 +90,9 @@ println!("{:?}", arr);              // [1111, 22, 33, 44]
 
 ## 字符串切片 `&str` 的特殊性
 
-`String` 的切片类型是 `str`(引用形式为 `&str`),而**不是** `&[String]`.`&str` 和 `&String` 是两种不同的类型(在 [String字符串](./String字符串.md)章节将详细介绍):
+`String` 的切片类型是 `str`(引用形式为 `&str`),而**不是** `&[String]`;
+
+`&str` 和 `&String` 是两种不同的类型(在 [String字符串](./String字符串.md)章节将详细介绍):
 
 ```rust
 let s = String::from("hello world!");
@@ -160,21 +162,24 @@ let arr = [11, 22, 33, 44];
 println!("{}", arr.first().unwrap()); // 11,等价于 (&arr).first()
 ```
 
-## 为什么切片只能通过引用使用
-
-`[T]` 和 `str` 属于 **[DST(动态大小类型,Dynamically Sized Type)](./高级类型.md#动态大小类型和-sized-trait)**:
-
-- 编译时大小未知,无法直接分配栈空间
-- 必须通过引用使用,引用将其变为固定大小的胖指针
-
-```rust
-let slice: [i32] = [1, 2, 3][..]; // ❌ DST 无法直接存储
-let slice: &[i32] = &[1, 2, 3];   // ✅ 通过引用使用
-```
-
 ## 常用切片方法
 
-切片提供了丰富的内置方法,以下是常用的一些:
+切片提供了丰富的内置方法,以下是常用方法对照表:
+
+| 方法            | 签名                                          | 说明                     |
+| --------------- | --------------------------------------------- | ------------------------ |
+| `len()`         | `fn len(&self) -> usize`                      | 返回切片中元素的个数     |
+| `is_empty()`    | `fn is_empty(&self) -> bool`                  | 检查切片是否为空         |
+| `contains()`    | `fn contains(&self, x: &T) -> bool`           | 检查切片是否包含某个元素 |
+| `repeat()`      | `fn repeat(&self, n: usize) -> Vec<T>`        | 将切片元素重复 n 次      |
+| `reverse()`     | `fn reverse(&mut self)`                       | 反转切片(需要可变)       |
+| `swap()`        | `fn swap(&mut self, a: usize, b: usize)`      | 交换两个索引处的元素     |
+| `windows()`     | `fn windows(&self, size: usize)`              | 返回滚动窗口迭代器       |
+| `join()`        | `fn join(&self, sep: &T) -> Vec<T>`           | 连接元素并返回向量       |
+| `starts_with()` | `fn starts_with(&self, needle: &[T]) -> bool` | 检查是否以某切片开头     |
+| `ends_with()`   | `fn ends_with(&self, needle: &[T]) -> bool`   | 检查是否以某切片结尾     |
+
+方法示例:
 
 ```rust
 let arr = [11, 22, 33, 44, 55];
@@ -209,7 +214,9 @@ println!("{}", arr.starts_with(&[11, 22])); // true
 println!("{}", arr.ends_with(&[55]));        // true
 ```
 
-> 更多方法参见 [Rust 官方文档 - slice](https://doc.rust-lang.org/std/primitive.slice.html).注意: 大部分切片方法**不适用于** `&str`,字符串切片有其专属方法集.
+> 更多方法参见 [标准库 slice](https://doc.rust-lang.org/std/primitive.slice.html).
+>
+> 注意: 大部分切片方法**不适用于** `&str`,字符串切片有其专属方法集.
 
 ## 切片与借用规则
 
@@ -221,7 +228,7 @@ println!("{}", arr.ends_with(&[55]));        // true
 ```rust
 let mut arr = [1, 2, 3];
 let r1 = &arr[..];        // 不可变切片
-// let r2 = &mut arr[..]; // ❌ 不可变切片存在时,不能创建可变切片
+let r2 = &mut arr[..];    //[!code error] ❌ 不可变切片存在时,不能创建可变切片
 println!("{:?}", r1);
 let r3 = &mut arr[..];    // ✅ r1 已不再使用,可以创建可变切片
 r3[0] = 10;

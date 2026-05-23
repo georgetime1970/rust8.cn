@@ -12,8 +12,8 @@ Rust 中有三种结构体: [**经典结构体**](#经典结构体-named-struct)
 
 Rust 社区推荐使用以下命名规范:
 
-- 结构体名使用**帕斯卡命名法**(`PascalCase`)
-- 字段名使用**蛇形命名法**(`snake_case`)
+- 结构体名使用[帕斯卡命名法(`PascalCase`)](./0.基础概念.md#帕斯卡命名法-pascal-case)
+- 字段名使用[蛇形命名法(`snake_case`)](./0.基础概念.md#蛇形命名法-snake-case)
 
 ### 经典结构体(Named Struct)
 

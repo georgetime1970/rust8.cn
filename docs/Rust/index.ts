@@ -4,6 +4,7 @@ const directory = {
   items: [
     { text: "前言", link: "/Rust/前言" },
     { text: "学习资料", link: "/Rust/学习资料" },
+    { text: "基础概念", link: "/Rust/0.基础概念" },
     { text: "Rust介绍", link: "/Rust/Rust介绍" },
     { text: "安装并创建项目", link: "/Rust/安装并创建项目" },
     { text: "注释", link: "/Rust/注释" },

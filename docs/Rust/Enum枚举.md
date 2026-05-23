@@ -24,8 +24,8 @@ description: 本文详细介绍了 Rust 语言中 enum(枚举)的定义、用法
 
 Rust 社区推荐使用以下命名规范:
 
-- 枚举名使用**帕斯卡命名法**(`PascalCase`)
-- 变体名也使用**帕斯卡命名法**(`PascalCase`)
+- 枚举名使用[帕斯卡命名法(`PascalCase`)](./0.基础概念.md#帕斯卡命名法-pascal-case)
+- 变体名也使用[帕斯卡命名法(`PascalCase`)](./0.基础概念.md#帕斯卡命名法-pascal-case)
 
 ### 无数据变体(Unit-like Variant)
 
