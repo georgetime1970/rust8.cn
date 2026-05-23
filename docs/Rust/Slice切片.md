@@ -6,7 +6,7 @@ description: 介绍 Rust 语言中切片(Slice)的基本概念、语法、类型
 
 Rust 中的**切片(Slice)**是对某段连续内存数据的引用,不持有所有权.切片不仅是一种操作,也是一种独立的原始数据类型.
 
-初读这一章你可能会有点迷惑,当你学习完 [String字符串](./String字符串.md) 一章后,你会有更清晰的认知,不要着急,你先记住切片是一种操作,切片后会产生一个新的数据类型,叫切片类型.
+初读这一章你可能会有点迷惑,当你学习完 [字符串](./字符串.md) 一章后,你会有更清晰的认知,不要着急,你先记住切片是一种操作,切片后会产生一个新的数据类型,叫切片类型.
 
 ## 切片操作语法
 
@@ -88,11 +88,11 @@ println!("{:?}", arr);              // [1111, 22, 33, 44]
 - 数组类型: `[T; N]`,数组引用: `&[T; N]`
 - 切片类型: `[T]`,切片引用: `&[T]`
 
-## 字符串切片 `&str` 的特殊性
+## 字符串切片 `str` 的特殊性
 
 `String` 的切片类型是 `str`(引用形式为 `&str`),而**不是** `&[String]`;
 
-`&str` 和 `&String` 是两种不同的类型(在 [String字符串](./String字符串.md)章节将详细介绍):
+`&str` 和 `&String` 是两种不同的类型(在 [字符串](./字符串.md) 章节将详细介绍):
 
 ```rust
 let s = String::from("hello world!");
@@ -116,20 +116,34 @@ print_message(&s);      // ✅ &String 自动强制转换为 &str
 print_message("world"); // ✅ 字符串字面量直接作为 &str
 ```
 
+> `String` 实现了 [Deref 隐式转换](./智能指针.md#deref-隐式转换),因此 `&String` 可以自动转换为 `&str`,但反过来不行.使用 `&str` 作为参数类型更通用,兼容 `String` 的借用.
+
 ### 字符串切片的修改限制
 
-为保证字符串总是有效的 UTF-8 编码,Rust 不允许通过切片随意修改字符串字符.`&mut str` 仅提供了两个修改 ASCII 大小写的方法:
+为保证字符串总是有效的 UTF-8 编码,Rust 不允许通过切片随意修改字符串字符.`&mut str` 仅提供了三个修改 ASCII 大小写的方法:
 
 ```rust
 let mut s = String::from("HELLO");
 let ss = &mut s[..];
-ss.make_ascii_lowercase(); // 1. 将 ASCII 字符转换为小写
+
+// 1. 将 ASCII 字符转换为小写
+ss.make_ascii_lowercase();
 println!("{}", s); // hello
-ss.make_ascii_uppercase(); // 2. 将 ASCII 字符转换为大写
+
+// 2. 将 ASCII 字符转换为大写
+ss.make_ascii_uppercase();
 println!("{}", s); // HELLO
+
+// 3. 获取可变字节切片,可以修改字节内容,但必须保证仍然是有效的 UTF-8 编码
+unsafe{
+ss.as_bytes_mut()
+    .iter_mut()
+    .for_each(|b| *b = b'a'); // 将所有字节改为 'a'
+}
+println!("{}", s); // aaaaa
 ```
 
-除此之外,没有其他原地修改字符串内容的方法.
+除此之外,没有其他原地修改字符串切片内容的方法.
 
 ### UTF-8 字节边界
 
