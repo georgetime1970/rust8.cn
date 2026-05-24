@@ -1,12 +1,12 @@
 ---
-description: "Option<T> 是 Rust 中一个非常重要的枚举类型,用来表示一个值要么存在(Some),要么不存在(None).它是 Rust 处理可能缺失值的核心工具,通过强制程序员显式处理 None 情况,从根源上避免了空指针异常等常见错误.本章将深入介绍 Option<T> 的定义、实例化、常用方法以及在实际开发中的应用场景."
+description: "Option<T> 是 Rust 中一个非常重要的枚举类型，用来表示一个值要么存在(Some)，要么不存在(None)。它是 Rust 处理可能缺失值的核心工具，通过强制程序员显式处理 None 情况，从根源上避免了空指针异常等常见错误。本章将深入介绍 Option<T> 的定义、实例化、常用方法以及在实际开发中的应用场景."
 ---
 
 # `Option<T>` 枚举
 
-`Option<T>` 是 Rust 标准库中内置的枚举,用来表示"一个值要么存在(`Some`),要么不存在(`None`)".
+`Option<T>` 是 Rust 标准库中内置的枚举，用来表示"一个值要么存在(`Some`)，要么不存在(`None`)"。
 
-Rust 没有 `null` 值,用 `Option<T>` 来强迫程序员**显式处理值不存在的情况**,从根源上避免了其他语言中常见的"空指针异常".
+Rust 没有 `null` 值，用 `Option<T>` 来强迫程序员**显式处理值不存在的情况**，从根源上避免了其他语言中常见的"空指针异常"。
 
 ## `Option<T>` 的定义
 
@@ -19,17 +19,17 @@ enum Option<T> {
 }
 ```
 
-`Option<T>` 是一个**泛型枚举**,它有两个变体:
+`Option<T>` 是一个**泛型枚举**，它有两个变体:
 
-- `Some(T)`: 包含一个类型为 `T` 的值,表示存在.
-- `None`: 不包含任何值,表示不存在.
+- `Some(T)`: 包含一个类型为 `T` 的值，表示存在。
+- `None`: 不包含任何值，表示不存在。
 
 > [!warning] 注意
 > `Some` 和 `None` 不是关键字
 
 ## `Option<T>` 的实例化
 
-实例化 `Option<T>` 时,可以使用 `Some` 来包装一个值,或者直接使用 `None` 来表示没有值:
+实例化 `Option<T>` 时，可以使用 `Some` 来包装一个值，或者直接使用 `None` 来表示没有值:
 
 ```rust
 let some_number = Some(1);           // 等于 Option::Some(1)
@@ -40,7 +40,7 @@ let none_number: Option<i32> = None; // 必须标注类型,否则编译器无法
 
 ### `match` 模式匹配
 
-`match` 是处理 `Option<T>` 最基本的方式,它强制要求处理所有变体:
+`match` 是处理 `Option<T>` 最基本的方式，它强制要求处理所有变体:
 
 ```rust
 let num = Some(5);
@@ -53,7 +53,7 @@ match num {
 
 ### `if let` 简化匹配
 
-只关心 `Some` 分支时,`if let` 比 `match` 更简洁:
+只关心 `Some` 分支时，`if let` 比 `match` 更简洁:
 
 ```rust
 let num = Some(5);
@@ -67,7 +67,7 @@ if let Some(n) = num {
 
 ### `while let` 循环匹配
 
-值为 `Some` 时持续循环,`None` 时自动退出:
+值为 `Some` 时持续循环，`None` 时自动退出:
 
 ```rust
 let mut stack = vec![1, 2, 3];
@@ -79,7 +79,7 @@ while let Some(top) = stack.pop() {
 
 ## `Option<T>` 的常见用途
 
-1.  **函数返回值**: 当函数可能无法返回有效结果时,使用 `Option` 来表示成功或失败.
+1.  **函数返回值**: 当函数可能无法返回有效结果时，使用 `Option` 来表示成功或失败。
 
     ```rust
     fn find_user(id: u32) -> Option<String> {
@@ -91,7 +91,7 @@ while let Some(top) = stack.pop() {
     }
     ```
 
-2.  **结构体字段**: 当某个字段可能不存在时,使用 `Option` 来表示.
+2.  **结构体字段**: 当某个字段可能不存在时，使用 `Option` 来表示。
 
     ```rust
     struct User {
@@ -101,7 +101,7 @@ while let Some(top) = stack.pop() {
     }
     ```
 
-3.  **解析/转换操作**: 当某个操作可能失败时,使用 `Option` 来表示成功或失败.
+3.  **解析/转换操作**: 当某个操作可能失败时，使用 `Option` 来表示成功或失败。
 
     ```rust
     fn parse_port(s: &str) -> Option<u16> {
@@ -119,9 +119,9 @@ while let Some(top) = stack.pop() {
 | --------------------------- | ---------------------------------------------------------- |
 | `unwrap()`                  | `Some(值)` 返回值；`None` 直接 panic                       |
 | `unwrap_or(default)`        | `None` 时返回指定默认值                                    |
-| `unwrap_or_else(\|\| expr)` | `None` 时执行闭包生成默认值(延迟求值,适合开销较大的默认值) |
+| `unwrap_or_else(\|\| expr)` | `None` 时执行闭包生成默认值(延迟求值，适合开销较大的默认值) |
 | `unwrap_or_default()`       | `None` 时返回类型的零值(需实现 `Default` trait)            |
-| `expect("msg")`             | 同 `unwrap`,但 panic 时显示自定义消息,便于调试             |
+| `expect("msg")`             | 同 `unwrap`，但 panic 时显示自定义消息，便于调试             |
 
 ```rust
 let none: Option<i32> = None;
@@ -137,7 +137,7 @@ let e = some_val.expect("值不存在");     // 5,若为 None 则 panic 并打�
 
 ### 状态检查类
 
-检查 `Option` 当前的状态,不消耗所有权:
+检查 `Option` 当前的状态，不消耗所有权:
 
 | 方法                      | 说明                       |
 | ------------------------- | -------------------------- |
@@ -163,7 +163,7 @@ println!("{}", num.is_some_and(|x| x > 9)); // false
 | --------------------------------------- | ---------------------------------------------------------- |
 | `map(\|x\| expr)`                       | `Some` 时对值进行转换返回新 `Some`；`None` 原样返回 `None` |
 | `map_or(default, \|x\| expr)`           | `Some` 时转换；`None` 时返回默认值(立即求值)               |
-| `map_or_else(\|\| default, \|x\| expr)` | 同 `map_or`,但默认值通过闭包延迟生成                       |
+| `map_or_else(\|\| default, \|x\| expr)` | 同 `map_or`，但默认值通过闭包延迟生成                       |
 | `filter(\|x\| cond)`                    | `Some` 且条件满足返回原 `Some`；否则返回 `None`            |
 
 ```rust
@@ -181,12 +181,12 @@ let filtered2 = num.filter(|n| *n > 10);         // None
 
 ### 链式处理类
 
-组合多个 `Option` 操作,适合多步骤的可失败逻辑:
+组合多个 `Option` 操作，适合多步骤的可失败逻辑:
 
 | 方法                     | 说明                                                                   |
 | ------------------------ | ---------------------------------------------------------------------- |
 | `and(other)`             | `Some` 时返回 `other`；`None` 返回 `None`                              |
-| `and_then(\|x\| Option)` | 链式处理,闭包返回新的 `Option`(扁平化,等同于其他语言的 `flatMap`)      |
+| `and_then(\|x\| Option)` | 链式处理，闭包返回新的 `Option`(扁平化，等同于其他语言的 `flatMap`)      |
 | `or(other)`              | `Some` 返回自身；`None` 返回 `other`                                   |
 | `or_else(\|\| Option)`   | `Some` 返回自身；`None` 执行闭包返回结果                               |
 | `?` 运算符               | 有值就继续；`None` 直接从当前函数返回 `None`(仅限返回 `Option` 的函数) |
@@ -217,9 +217,9 @@ fn parse_and_double(s: &str) -> Option<i32> {
 
 | 方法             | 说明                                            |
 | ---------------- | ----------------------------------------------- |
-| `as_ref()`       | `Option<T>` → `Option<&T>`,获取值的不可变引用   |
-| `as_mut()`       | `Option<T>` → `Option<&mut T>`,获取值的可变引用 |
-| `as_deref()`     | `Option<String>` → `Option<&str>`,自动解引用    |
+| `as_ref()`       | `Option<T>` → `Option<&T>`，获取值的不可变引用   |
+| `as_mut()`       | `Option<T>` → `Option<&mut T>`，获取值的可变引用 |
+| `as_deref()`     | `Option<String>` → `Option<&str>`，自动解引用    |
 | `as_deref_mut()` | `Option<String>` → `Option<&mut str>`           |
 
 ```rust
@@ -250,7 +250,7 @@ println!("{:?}", opt); // Some("hi world")
 | `replace(value)`                 | 替换为新值并返回旧值                                 |
 | `insert(value)`                  | 插入值(无论原来有没有值)并返回可变引用               |
 | `get_or_insert(value)`           | `None` 时插入值并返回可变引用；`Some` 时直接返回引用 |
-| `get_or_insert_with(\|\| value)` | 同上,但通过闭包延迟生成值                            |
+| `get_or_insert_with(\|\| value)` | 同上，但通过闭包延迟生成值                            |
 
 ```rust
 let mut opt = Some(5);
@@ -271,10 +271,10 @@ println!("{:?}", cache); // Some(43)
 
 | 方法                   | 说明                                                                  |
 | ---------------------- | --------------------------------------------------------------------- |
-| `ok_or(err)`           | `Option<T>` → `Result<T, E>`；`Some(v)` → `Ok(v)`,`None` → `Err(err)` |
-| `ok_or_else(\|\| err)` | 同 `ok_or`,但错误值通过闭包延迟生成                                   |
+| `ok_or(err)`           | `Option<T>` → `Result<T, E>`；`Some(v)` → `Ok(v)`，`None` → `Err(err)` |
+| `ok_or_else(\|\| err)` | 同 `ok_or`，但错误值通过闭包延迟生成                                   |
 | `transpose()`          | `Option<Result<T, E>>` → `Result<Option<T>, E>`                       |
-| `flatten()`            | `Option<Option<T>>` → `Option<T>`,去掉一层嵌套                        |
+| `flatten()`            | `Option<Option<T>>` → `Option<T>`，去掉一层嵌套                        |
 | `zip(other)`           | `Some(a).zip(Some(b))` → `Some((a, b))`；任一为 `None` 则返回 `None`  |
 | `unzip()`              | `Option<(A, B)>` → `(Option<A>, Option<B>)`                           |
 
