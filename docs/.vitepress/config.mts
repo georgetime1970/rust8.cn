@@ -9,8 +9,8 @@ export default defineConfig({
   // base: '/Tutorial/', // GitHub 页面下部署站点,则需要设置此项,注意斜杠开头和结尾不能少！
   head: [
     // 站点图标
-    // ['link', { rel: 'icon', href: '/Tutorial/logo/48.ico' }], // 如果使用github的域名,构建到GitHub 页面,需要加仓库的名字
-    ["link", { rel: "icon", href: "/assets/logo/48.ico" }],
+    // ['link', { rel: 'icon', href: '/Tutorial/logo/favicon.ico' }], // 如果使用github的域名,构建到GitHub 页面,需要加仓库的名字
+    ["link", { rel: "icon", href: "/favicon.ico" }],
     // 主屏幕图标  Apple Touch Icon (iOS 设备的主屏幕图标)
     ["link", { rel: "icon", type: "image/png", sizes: "180x180", href: "/assets/logo/180.png" }],
     ["link", { rel: "apple-touch-icon", type: "image/png", sizes: "180x180", href: "/assets/logo/180.png" }],
@@ -59,7 +59,7 @@ export default defineConfig({
   // 主题级选项
   themeConfig: {
     // 导航栏上显示的 Logo,位于站点标题前.
-    logo: "/assets/logo/48.ico",
+    logo: "/favicon.ico",
 
     // 社交链接
     socialLinks: [{ icon: "github", link: "https://github.com/georgetime1970/rust8.cn" }],

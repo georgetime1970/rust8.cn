@@ -2,3 +2,4 @@
 docs/.vitepress/dist
 docs/.vitepress/cache
 /__pycache__
+convert_punctuation.py
