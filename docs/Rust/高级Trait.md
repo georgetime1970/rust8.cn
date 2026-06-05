@@ -75,12 +75,12 @@ trait ComplexTrait {
 复杂版(把约束放在 where 子句里):
 
 ```rust{5}
-trait ComplexTrait {
-    type Item;
-
-    // 也可以在 Trait 定义的最下面统一写约束
-    where
-        Self::Item: Display + Clone;
+trait ComplexTrait
+// 也可以在 Trait 定义的最下面统一写约束
+where
+    Self::Item: Display + Clone,
+{
+     type Item;
 }
 ```
 
@@ -100,7 +100,7 @@ trait ComplexTrait {
 - **默认泛型类型参数语法: `trait TraitName<T=Type>`**
 
 ```rust{2,9,16,23}
-// 定义一个带泛型类型参数的 Trait
+// 定义一个带默认泛型类型参数的 Trait
 trait Into<Rhs = Self> {
     fn into(self) -> Rhs;
 }
@@ -114,14 +114,14 @@ impl Into for Converter {
     }
 }
 
-// 重载 1: 处理 f64
+// 使用自定义泛型类型参数 f64 实现重载,处理 f64 类型
 impl Into<f64> for Converter {
     fn into(self) -> f64 {
         0.0
     }
 }
 
-// 重载 2: 处理 Vec<u8>
+// 使用自定义泛型类型参数 Vec<u8> 实现重载,处理 Vec<u8> 类型
 impl Into<Vec<u8>> for Converter {
     fn into(self) -> Vec<u8> {
         vec![]
@@ -130,13 +130,13 @@ impl Into<Vec<u8>> for Converter {
 
 fn main() {
     let c = Converter;
-    let _ = c.into(); // 使用默认的 Rhs,得到 Converter
-    let _ = c.into::<f64>(); // 显式指定 Rhs 为 f64
-    let _ = c.into::<Vec<u8>>(); // 显式指定 Rhs 为 Vec<u8>
+    let _ = c.into();            // 使用默认的 Rhs 类型 Converter,得到 Converter
+    let _ = c.into::<f64>();     // 显式指定 Rhs 类型为自定义的 f64
+    let _ = c.into::<Vec<u8>>(); // 显式指定 Rhs 类型为自定义的 Vec<u8>
 }
 ```
 
-> 这里泛型类型参数是 `Rhs = Self`， 如果你不指定 `Rhs`，它默认就是 `Self`(即当前类型本身)。
+> 这里泛型类型参数是 `Rhs`，使用 `Rhs = Self` 指定默认类型是 `Self`(即当前类型本身)。
 
 - `Rhs` 只是一个名字(Right Hand Side 的缩写，意为"右操作数")。你可以把它改成 `T`、`Other` 或任何你喜欢的名字。
 - `=` 后面的部分就是默认值。
@@ -144,15 +144,16 @@ fn main() {
 
 ### 调用语法
 
-- **调用自定义泛型类型参数:** `instance.method::<Type>()`
 - **调用默认泛型类型参数:** `instance.method()`
+- **调用自定义泛型类型参数:** `instance.method::<Type>()`
 
 ```rust
-let result: Converter = c.into(); // 使用默认的 Rhs,得到 Converter
-let result: f64 = c.into::<f64>(); // 显式指定 Rhs
+let result: Converter = c.into();          // 使用默认的 Rhs 类型 Converter,得到 Converter
+let result: f64 = c.into::<f64>();         // 显式指定 Rhs 类型为 f64
+let result: Vec<u8> = c.into::<Vec<u8>>(); // 显式指定 Rhs 类型为 Vec<u8>
 ```
 
-> `instance.method::<Type>()` 是 Rust 中的 Turbo Fish(涡轮鱼 ::<>)语法，用于显式指定泛型类型参数。
+> `instance.method::<Type>()` 是 Rust 中的 Turbo Fish(涡轮鱼 `::<>`)语法，用于显式指定泛型类型参数。
 
 ### 使用默认泛型类型参数
 
@@ -229,7 +230,7 @@ fn main() {
 | ---------- | ----------------------------------- | ------------------------------------------- |
 | 实现数量   | 一个类型可以有多个不同参数的实现    | 一个类型只能有一个实现                      |
 | 使用场景   | 行为可能因输入类型而异(如 `Add<T>`) | 类型内部紧密相关的属性(如 `Iterator::Item`) |
-| 代码简洁度 | 签名较长，需重复声明参数             | 签名简洁，自动从 `Self` 推导                 |
+| 代码简洁度 | 签名较长，需重复声明参数            | 签名简洁，自动从 `Self` 推导                |
 | 语义       | 表示"多种可能"                      | 表示"这就是我的配套类型"                    |
 
 > 同一类型不能重复实现同一个 `Trait` 不是关联类型的特性，而是 Rust 的设计原则之一。
@@ -296,7 +297,7 @@ impl MyStruct {
 ```rust
 fn main() {
     let s = MyStruct;
-    s.do_something(); // 默认调用 MyStruct 的方法
+    s.do_something();         // 默认调用 MyStruct 的方法
     TraitA::do_something(&s); // 调用 TraitA 的方法
     TraitB::do_something(&s); // 调用 TraitB 的方法
 }
@@ -344,7 +345,7 @@ impl MyStruct {
 
 ```rust
 fn main() {
-    MyStruct::do_something(); // 调用 MyStruct 的固有方法
+    MyStruct::do_something();             // 调用 MyStruct 的固有方法
     <MyStruct as TraitA>::do_something(); // 调用 TraitA 的方法
     <MyStruct as TraitB>::do_something(); // 调用 TraitB 的方法
 }
