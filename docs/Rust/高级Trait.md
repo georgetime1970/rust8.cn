@@ -44,9 +44,9 @@ fn main() {
 
 > 本质是对实现者增加**约束**: 当你实现这个 Trait 时，你必须告诉编译器"我这个 Trait 里那个坑(关联类型)里填的是什么类型"。
 
-### 关联类型的约束
+### 关联类型的 Trait 约束
 
-**关联类型的约束(Trait Bounds on Associated Types)** 是指在定义 Trait 时，对关联类型施加的限制，要求实现该 Trait 的类型必须满足特定的条件(比如实现了某个其他 Trait)。这使得 Trait 更加灵活和强大，因为它允许你在 Trait 定义中指定对关联类型的要求，从而确保实现者提供的类型具有所需的功能。
+**关联类型的 Trait 约束(Trait Bounds on Associated Types)** 是指在定义 Trait 时，对关联类型施加的限制，要求实现该 Trait 的类型必须满足特定的条件(比如实现了某个其他 Trait)。这使得 Trait 更加灵活和强大，因为它允许你在 Trait 定义中指定对关联类型的要求，从而确保实现者提供的类型具有所需的功能。
 
 ```rust{5}
 use std::fmt::Display;
@@ -74,7 +74,7 @@ trait ComplexTrait {
 
 复杂版(把约束放在 where 子句里):
 
-```rust{5}
+```rust{3,4}
 trait ComplexTrait
 // 也可以在 Trait 定义的最下面统一写约束
 where
@@ -107,7 +107,7 @@ trait Into<Rhs = Self> {
 
 struct Converter;
 
-// 使用默认的 Rhs(即 Self,此处是 Converter)
+// 使用默认的 Rhs 类型(即 Self,此处是 Converter)
 impl Into for Converter {
     fn into(self) -> Self {
         self
@@ -127,13 +127,6 @@ impl Into<Vec<u8>> for Converter {
         vec![]
     }
 }
-
-fn main() {
-    let c = Converter;
-    let _ = c.into();            // 使用默认的 Rhs 类型 Converter,得到 Converter
-    let _ = c.into::<f64>();     // 显式指定 Rhs 类型为自定义的 f64
-    let _ = c.into::<Vec<u8>>(); // 显式指定 Rhs 类型为自定义的 Vec<u8>
-}
 ```
 
 > 这里泛型类型参数是 `Rhs`，使用 `Rhs = Self` 指定默认类型是 `Self`(即当前类型本身)。
@@ -148,9 +141,12 @@ fn main() {
 - **调用自定义泛型类型参数:** `instance.method::<Type>()`
 
 ```rust
-let result: Converter = c.into();          // 使用默认的 Rhs 类型 Converter,得到 Converter
-let result: f64 = c.into::<f64>();         // 显式指定 Rhs 类型为 f64
-let result: Vec<u8> = c.into::<Vec<u8>>(); // 显式指定 Rhs 类型为 Vec<u8>
+fn main() {
+    let c = Converter;
+    let _ = c.into();            // 使用默认的 Rhs 类型 Converter,得到 Converter
+    let _ = c.into::<f64>();     // 显式指定 Rhs 类型为自定义的 f64,得到 0.0
+    let _ = c.into::<Vec<u8>>(); // 显式指定 Rhs 类型为自定义的 Vec<u8>,得到 vec![]
+}
 ```
 
 > `instance.method::<Type>()` 是 Rust 中的 Turbo Fish(涡轮鱼 `::<>`)语法，用于显式指定泛型类型参数。
@@ -389,7 +385,7 @@ fn main() {
 }
 ```
 
-超 trait 的本质就是对实现者增加**约束**:**当你实现这个 Trait 时，你必须同时满足另一个 Trait 的要求.** 这使得你的 Trait 更加灵活和强大，因为它可以依赖于其他 Trait 的功能，而不需要在每个实现中重复代码。
+超 trait 的本质就是对实现者增加**约束**: **当你实现这个 Trait 时，你必须同时满足另一个 Trait 的要求。** 这使得你的 Trait 更加灵活和强大，因为它可以依赖于其他 Trait 的功能，而不需要在每个实现中重复代码。
 
 ## newtype 模式
 
