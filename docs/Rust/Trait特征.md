@@ -310,7 +310,7 @@ fn process(c: &dyn Container) {}
 
 如果你设计了一个 Trait，里面既有面向对象的方法，又有由于上述原因不满足对象安全的方法，你可以通过给不安全的方法加上 `where Self: Sized` 约束，将其从虚表中“剔除”。这样，这个 Trait 依然可以转为对象。
 
-```rust
+```rust{7}
 trait MyTrait {
     // 满足对象安全，会进入虚表
     fn safe_method(&self);
