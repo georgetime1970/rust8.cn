@@ -26,7 +26,7 @@ trait Playable {
     fn pause(&self) {              // 默认方法,可选覆盖
         println!("pause");
     }
-    fn stop() -> String;           // 抽象方法,关联函数(不使用 self 形式参数)
+    fn stop() -> String; // 抽象方法,关联函数(不使用 self 形式参数)
 }
 ```
 
@@ -204,6 +204,16 @@ fn create_media(is_video: bool) -> impl Playable {
 Trait 本身不能作为数据类型使用，但 **Trait 对象**(Trait Object)可以。Trait 对象使用 `dyn` 关键字(dynamic)标记，几乎总是以引用方式使用: `&dyn Trait`、`Box<dyn Trait>`、`Rc<dyn Trait>` 等。
 
 ```rust
+trait Playable {
+    fn play(&self);                // 抽象方法,必须实现
+    fn get_duration(&self) -> f32; // 抽象方法,必须实现
+    fn pause(&self) {              // 默认方法,可选覆盖
+        println!("pause");
+    }
+    // stop 方法被注释掉了，因为它是关联函数且不使用 self 形式参数，不满足对象安全(object safety)的要求，不能在 Trait 对象中使用。
+    // fn stop() -> String; // 抽象方法,关联函数(不使用 self 形式参数)
+}
+
 // x 是一个 Trait 对象,要求是实现了 Playable 的某个类型实例
 let x: &dyn Playable = &Audio { name: "song.mp3".to_string(), duration: 3.5 };
 x.play(); // 运行时动态分发
@@ -273,17 +283,20 @@ fn create_media(is_video: bool) -> Box<dyn Playable> {
 
 ### Trait 对象安全
 
-只有**对象安全**(object-safe)的 Trait 才能创建 Trait 对象。Trait 方法必须满足:
+只有**对象安全**(object-safe)的 Trait 才能创建 Trait 对象。Trait 方法必须满足以下全部条件:
 
+- **方法必须带有 `self` 参数**(即 `self`、`&self`、`&mut self` 或 `Box<Self>` 等形式)，否则 Trait 对象在运行时无法通过虚表找到具体实现。
 - **返回值类型不是 `Self`**，否则无法在运行时确定具体类型也就无法在编译期确定大小。
 - **方法没有泛型类型参数**，否则无法生成统一的虚函数表。
+- **Trait 本身不能要求 `Self: Sized`**(即不能写 `trait Foo: Sized`)，否则与 Trait 对象的动态大小特性冲突。
+- **不能包含关联常量**(Associated Constants)，目前 Rust 虚表机制还不支持在运行时通过 Trait 对象访问关联常量。
+- **不能包含带泛型的关联类型**(GATs)，带泛型参数的关联类型无法在虚表中统一表示。
 
 **❌ 错误示例: 返回值类型不是 `Self`**
 
 ```rust
 trait Clone {
-    // 错误：返回了 Self
-    fn clone(&self) -> Self;
+    fn clone(&self) -> Self; // [!code error] ❌ 错误: 返回值类型是 Self
 }
 
 // 尝试编译会报错：the trait `Clone` cannot be made into an object
@@ -296,8 +309,7 @@ fn make_object(obj: &dyn Clone) {}
 
 ```rust
 trait Container {
-    // 错误：方法带有泛型参数 T
-    fn insert<T>(&self, item: T);
+    fn insert<T>(&self, item: T); // [!code error] ❌ 方法带有泛型参数 T
 }
 
 // 编译报错：method `insert` has generic type parameters
@@ -305,6 +317,62 @@ fn process(c: &dyn Container) {}
 ```
 
 > 原因：Rust 的泛型采用的是单态化（Monomorphization）机制。这意味着编译器会为每一个调用该泛型方法的具体类型生成一份独立的函数代码。如果 Trait 方法带了泛型，理论上它可以被无数种不同的类型调用，这就需要生成无数个函数指针。虚表（vtable）的大小是固定的，根本装不下无限个函数指针。
+
+**❌ 错误示例: 方法没有 `self` 参数**
+
+```rust
+trait Playable {
+    fn stop() -> String; // [!code error] ❌ 错误: stop 是关联函数，没有 self 参数
+    fn play(&self); // ✅ 有 self 参数，满足对象安全
+}
+
+// 编译报错：the trait `Playable` cannot be made into an object
+fn process(p: &dyn Playable) {}
+```
+
+> 原因：如果没有 `self` 参数，Trait 对象在运行时通过虚表(vtable)就找不到具体应该调用哪个结构体的实现。解决方法是给方法加上 `where Self: Sized`（见下文「不安全 Trait 对象的共存」）。
+
+**❌ 错误示例: Trait 本身要求 `Self: Sized`**
+
+```rust
+trait MyTrait: Sized { // [!code error] ❌ 错误: Trait 本身要求 Self: Sized
+    fn do_something(&self);
+}
+
+// 编译报错：the trait `MyTrait` cannot be made into an object
+fn process(obj: &dyn MyTrait) {}
+```
+
+> 原因：Trait 对象（`dyn MyTrait`）在编译期是动态大小类型（Unsized），而 `Sized` 约束要求类型大小在编译期确定，两者直接冲突。一旦 Trait 声明了 `: Sized`，它就永远无法转为 Trait 对象。
+
+**❌ 错误示例: 包含关联常量**
+
+```rust
+trait Configurable {
+    const MAX_SIZE: usize = 1024; // [!code error] ❌ 错误: 包含关联常量
+    fn configure(&self);
+}
+
+// 编译报错
+fn process(c: &dyn Configurable) {}
+```
+
+> 原因：目前 Rust 的虚表机制还不支持在运行时通过 Trait 对象指针去访问关联常量，因为常量没有存储在虚表中。
+
+**❌ 错误示例: 包含带泛型的关联类型(GATs)**
+
+```rust
+trait Container {
+    type Item<T>; // [!code error] ❌ 错误: 包含带泛型的关联类型(GATs)
+
+    fn get(&self) -> &str;
+}
+
+// 编译报错
+fn process(c: &dyn Container) {}
+```
+
+> 原因：普通的关联类型（如 `type Item;`）在指定具体类型后是对象安全的，但一旦关联类型本身带有泛型参数，就无法在虚表中统一表示了。
 
 **不安全 Trait 对象的共存**
 
